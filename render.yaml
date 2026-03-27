@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: bloomie-helpdesk
+    runtime: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BLOOMIE_HOST
+        value: 0.0.0.0
+      - key: BLOOMIE_PORT
+        value: 4181
+      - key: BLOOMIE_BASE_URL
+        sync: false
+      - key: BLOOMIE_SECRET
+        generateValue: true
+      - key: BLOOMIE_MASTER_PASS
+        sync: false
+      - key: BLOOMIE_AUTH_RATE_LIMIT_MAX
+        value: 30
+      - key: BLOOMIE_AUTH_RATE_LIMIT_WINDOW_MS
+        value: 300000
+      - key: BLOOMIE_API_RATE_LIMIT_MAX
+        value: 300
+      - key: BLOOMIE_API_RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: BLOOMIE_SYNC_INTERVAL_MS
+        value: 900000
+      - key: BLOOMIE_BACKUP_INTERVAL_MS
+        value: 21600000
+    disks:
+      - name: bloomie-data
+        mountPath: /app/backend/data
+        sizeGB: 1
+      - name: bloomie-logs
+        mountPath: /app/backend/logs
+        sizeGB: 1
+      - name: bloomie-backups
+        mountPath: /app/backend/backups
+        sizeGB: 1

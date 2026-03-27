@@ -1,0 +1,13 @@
+{
+  "name": "Bloomie Helpdesk",
+  "short_name": "Bloomie",
+  "description": "Local-first HR helpdesk portal for tickets, knowledge, forum, and Bloomie assistance.",
+  "start_url": "./bloomie-helpdesk-v1.html",
+  "display": "standalone",
+  "background_color": "#050508",
+  "theme_color": "#050508",
+  "orientation": "any",
+  "lang": "en-IN",
+  "categories": ["business", "productivity"],
+  "icons": []
+}

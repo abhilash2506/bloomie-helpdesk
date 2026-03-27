@@ -1,0 +1,16 @@
+[Unit]
+Description=Bloomie Helpdesk
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/bloomie
+EnvironmentFile=/opt/bloomie/.env
+ExecStart=/usr/bin/node /opt/bloomie/backend/server.js
+Restart=always
+RestartSec=5
+User=bloomie
+Group=bloomie
+
+[Install]
+WantedBy=multi-user.target
