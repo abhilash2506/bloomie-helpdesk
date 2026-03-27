@@ -1,0 +1,11 @@
+{
+  "name": "bloomie-helpdesk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bloomie Helpdesk product server",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "preflight": "bash deploy/preflight.sh"
+  }
+}
