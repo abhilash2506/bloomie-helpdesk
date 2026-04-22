@@ -1,5 +1,5 @@
 [Unit]
-Description=Bloomie Helpdesk
+Description=Bloomie
 After=network.target
 
 [Service]

@@ -1,5 +1,6 @@
 const CDP_HTTP = process.env.CDP_HTTP || 'http://127.0.0.1:9222';
 const APP_URL = process.env.APP_URL || 'http://127.0.0.1:4181/';
+const MASTER_PASS = process.env.MASTER_PASS || 'Bloomie@9271#Master';
 
 async function httpJson(url, options = {}) {
   const res = await fetch(url, options);
@@ -41,6 +42,7 @@ class CdpClient {
     });
     await this.send('Runtime.enable');
     await this.send('Page.enable');
+    await this.send('Network.enable');
   }
 
   send(method, params = {}) {
@@ -69,10 +71,34 @@ async function createTab(url) {
   return httpJson(`${CDP_HTTP}/json/new?${encodeURIComponent(url)}`, { method: 'PUT' });
 }
 
+async function waitFor(client, expression, { timeoutMs = 12000, intervalMs = 250 } = {}) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    const result = await client.eval(expression);
+    if (result) return result;
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+  throw new Error(`Timed out waiting for condition: ${expression}`);
+}
+
+async function resetBrowserState(client) {
+  await client.send('Network.clearBrowserCookies');
+  await client.send('Network.clearBrowserCache');
+  await client.send('Page.navigate', { url: APP_URL });
+  await waitFor(client, `document.readyState === 'complete'`);
+  await client.eval(`(() => {
+    try { localStorage.clear(); } catch {}
+    try { sessionStorage.clear(); } catch {}
+    return true;
+  })()`);
+}
+
 async function main() {
   const target = await createTab(APP_URL);
   const client = new CdpClient(target.webSocketDebuggerUrl);
   await client.connect();
+  await resetBrowserState(client);
+  await waitFor(client, `!!document.getElementById('loginTenantCode') && !!document.getElementById('loginUser') && !!document.getElementById('loginPass') && !!document.getElementById('loginBtn')`);
 
   const summary = {};
   summary.initial = await client.eval(`({
@@ -87,12 +113,17 @@ async function main() {
     const tenant = document.getElementById('loginTenantCode');
     const user = document.getElementById('loginUser');
     const pass = document.getElementById('loginPass');
-    if (!tenant || !user || !pass) return { ok: false, error: 'login fields missing' };
+    const btn = document.getElementById('loginBtn');
+    if (!tenant || !user || !pass || !btn) return { ok: false, error: 'login fields missing' };
     tenant.value = 'DEFAULT';
     user.value = 'master';
-    pass.value = 'Bloomie@9271#Master';
-    document.getElementById('loginBtn')?.click();
-    await new Promise(r => setTimeout(r, 1800));
+    pass.value = ${JSON.stringify(process.env.MASTER_PASS || 'Bloomie@9271#Master')};
+    btn.click();
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < 8000) {
+      if (document.getElementById('appShell') && getComputedStyle(document.getElementById('appShell')).display !== 'none') break;
+      await new Promise(r => setTimeout(r, 250));
+    }
     return {
       ok: !!document.getElementById('appShell') && getComputedStyle(document.getElementById('appShell')).display !== 'none',
       currentPage: Array.from(document.querySelectorAll('.page.active')).map(n => n.id),
@@ -103,12 +134,16 @@ async function main() {
 
   summary.chat = await client.eval(`(async () => {
     window.openBloomieChat();
-    await new Promise(r => setTimeout(r, 500));
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < 5000) {
+      if (document.getElementById('chatInp')) break;
+      await new Promise(r => setTimeout(r, 200));
+    }
     const inp = document.getElementById('chatInp');
     if (!inp) return { ok: false, error: 'chat input missing' };
     inp.value = 'hi';
     window.sendChat();
-    await new Promise(r => setTimeout(r, 1800));
+    await new Promise(r => setTimeout(r, 2200));
     const bubbles = Array.from(document.querySelectorAll('#chatMessages .chat-bubble'));
     return {
       ok: bubbles.length >= 2,
@@ -144,7 +179,7 @@ async function main() {
     return Array.from(document.querySelectorAll('.page.active')).map(n => n.id)[0] || '';
   })()`);
   await client.send('Page.reload', { ignoreCache: true });
-  await new Promise(r => setTimeout(r, 2500));
+  await waitFor(client, `document.readyState === 'complete'`);
   const refreshAfter = await client.eval(`({
     after: Array.from(document.querySelectorAll('.page.active')).map(n => n.id)[0] || '',
     loginVisible: !!document.getElementById('loginScreen') && getComputedStyle(document.getElementById('loginScreen')).display !== 'none'

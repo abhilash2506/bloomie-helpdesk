@@ -2,10 +2,56 @@
   "name": "bloomie-helpdesk",
   "version": "1.0.0",
   "private": true,
-  "description": "Bloomie Helpdesk product server",
+  "description": "Bloomie product server",
+  "main": "apps/desktop/electron-main.js",
   "scripts": {
     "start": "node backend/server.js",
     "dev": "node backend/server.js",
-    "preflight": "bash deploy/preflight.sh"
+    "preflight": "bash deploy/preflight.sh",
+    "qa:uat": "bash QA_UAT.sh",
+    "qa:browser": "node cdp_qa.js",
+    "qa:csp": "node scripts/cdp_probe.js",
+    "qa:roles": "node cdp_role_matrix_full.js",
+    "qa:mobile": "node cdp_mobile_sweep.js",
+    "qa:release": "bash scripts/release_gate.sh",
+    "app:prepare": "node scripts/prepare-app-shell.js",
+    "app:desktop": "electron .",
+    "app:desktop:dist": "electron-builder --dir",
+    "app:android:sync": "npx cap sync android",
+    "app:android:open": "npx cap open android",
+    "app:ios:sync": "npx cap sync ios",
+    "app:ios:open": "npx cap open ios"
+  },
+  "build": {
+    "appId": "com.bloomie.helpdesk",
+    "productName": "Bloomie",
+    "icon": "ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png",
+    "asarUnpack": [
+      "backend/**/*"
+    ],
+    "files": [
+      "apps/desktop/**/*",
+      "backend/**/*",
+      "bloomie-helpdesk-v1.html",
+      "manifest.webmanifest",
+      "service-worker.js",
+      "app-assets/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.business",
+      "icon": "ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/ios": "^6.1.2",
+    "electron": "^32.2.1",
+    "electron-builder": "^25.1.8"
   }
 }

@@ -1,0 +1,19 @@
+{
+  "appId": "com.bloomie.helpdesk",
+  "appName": "Bloomie",
+  "webDir": "dist-mobile",
+  "server": {
+    "url": "https://bloomie-helpdesk-demo-abhilash.onrender.com/",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "backgroundColor": "#050508",
+      "showSpinner": false
+    }
+  }
+}

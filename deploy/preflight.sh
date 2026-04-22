@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+ROOT_DIR="$(cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 echo "== Bloomie Deployment Preflight =="
@@ -29,6 +31,15 @@ else
   grep -q '^BLOOMIE_SECRET=' .env || warn "BLOOMIE_SECRET missing from .env"
   grep -q '^BLOOMIE_MASTER_PASS=' .env || warn "BLOOMIE_MASTER_PASS missing from .env"
   grep -q '^BLOOMIE_BASE_URL=' .env || warn "BLOOMIE_BASE_URL missing from .env"
+  if grep -q '^BLOOMIE_ALLOW_DEMO_DEFAULTS=true' .env; then
+    fail "BLOOMIE_ALLOW_DEMO_DEFAULTS=true is not allowed for production deployment"
+  fi
+  if grep -q '^BLOOMIE_SECRET=change-this-to-a-long-random-secret$' .env; then
+    fail "BLOOMIE_SECRET is still using the example value"
+  fi
+  if grep -q '^BLOOMIE_MASTER_PASS=change-this-master-password$' .env; then
+    fail "BLOOMIE_MASTER_PASS is still using the example value"
+  fi
 fi
 
 [[ -f "backend/server.js" ]] || fail "backend/server.js missing"

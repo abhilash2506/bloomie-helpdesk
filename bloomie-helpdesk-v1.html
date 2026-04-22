@@ -9,8 +9,10 @@
 <meta name="apple-mobile-web-app-title" content="Bloomie">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
-<title>Bloomie Helpdesk — HR Support Portal</title>
+<title>Bloomie — HR Support Portal</title>
 <link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./app-assets/bloomie-icon.svg">
+<link rel="apple-touch-icon" href="./app-assets/bloomie-icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Bricolage+Grotesque:opsz,wght@12..60,700;12..60,800;12..60,900&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════════
@@ -2349,7 +2351,7 @@ function getMascotLabel(type) {
   <div class="login-left">
     <div class="lp-mascot" id="loginMascot"></div>
     <div class="lp-brand">Bloomie</div>
-    <div class="lp-tag">Your smart HR Helpdesk — raise tickets, get instant answers, and resolve issues fast.</div>
+    <div class="lp-tag">Your smart HR Helpdesk — raise tickets, get guided answers, and resolve issues fast.</div>
     <div class="lp-features">
       <div class="lp-feat">
         <div class="lp-feat-icon">🎫</div>
@@ -2359,10 +2361,10 @@ function getMascotLabel(type) {
         </div>
       </div>
       <div class="lp-feat">
-        <div class="lp-feat-icon">🤖</div>
+        <div class="lp-feat-icon">🐝</div>
         <div>
-          <div class="lp-feat-title">Bloomie AI Assistant</div>
-          <div class="lp-feat-text">Get real-time answers on leave, payroll and policies</div>
+          <div class="lp-feat-title">Bloomie Guided Assistant</div>
+          <div class="lp-feat-text">Get answers grounded in configured sources, HRMS data, and policy guidance</div>
         </div>
       </div>
       <div class="lp-feat">
@@ -2379,7 +2381,7 @@ function getMascotLabel(type) {
   <div class="login-right">
     <div class="lr-logo">B</div>
     <div class="lr-title" id="authTitle">Welcome back</div>
-    <div class="lr-sub" id="authSubtitle">Sign in to your Bloomie Helpdesk</div>
+    <div class="lr-sub" id="authSubtitle">Sign in to Bloomie</div>
 
     <!-- ── LOGIN PANEL ── -->
     <div class="auth-panel" id="loginPanel">
@@ -2388,30 +2390,30 @@ function getMascotLabel(type) {
         <label class="auth-label">Company Code</label>
         <div class="auth-input-wrap">
           <span class="auth-input-icon">🏢</span>
-          <input class="auth-input" id="loginTenantCode" type="text" placeholder="e.g. DEFAULT or CLIENTA" value="DEFAULT">
+          <input class="auth-input" id="loginTenantCode" type="text" placeholder="e.g. DEFAULT or CLIENTA">
         </div>
       </div>
       <div class="auth-field">
         <label class="auth-label">Employee ID or Email</label>
         <div class="auth-input-wrap">
           <span class="auth-input-icon">👤</span>
-          <input class="auth-input" id="loginUser" type="text" placeholder="e.g. EMP-001 or name@company.com" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
+          <input class="auth-input" id="loginUser" type="text" placeholder="e.g. EMP-001 or name@company.com" autocomplete="username" data-legacy-keydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
         </div>
       </div>
       <div class="auth-field">
         <label class="auth-label">Password</label>
         <div class="auth-input-wrap">
           <span class="auth-input-icon">🔒</span>
-          <input class="auth-input" id="loginPass" type="password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-          <span class="pwd-toggle" onclick="togglePwd('loginPass',this)">👁️</span>
+          <input class="auth-input" id="loginPass" type="password" placeholder="Enter your password" autocomplete="current-password" data-legacy-keydown="if(event.key==='Enter')doLogin()">
+          <span class="pwd-toggle" data-legacy-click="togglePwd('loginPass',this)">👁️</span>
         </div>
       </div>
-      <button class="auth-btn" id="loginBtn" onclick="doLogin()">
+      <button class="auth-btn" id="loginBtn" data-legacy-click="doLogin()">
         Sign In →
       </button>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-        <button class="btn btn-secondary" id="loginGoogleBtn" style="flex:1" onclick="startSSO('google')">Continue with Google</button>
-        <button class="btn btn-ghost" id="loginMicrosoftBtn" style="flex:1" onclick="startSSO('microsoft')">Continue with Microsoft</button>
+        <button class="btn btn-secondary" id="loginGoogleBtn" style="flex:1" data-legacy-click="startSSO('google')">Continue with Google</button>
+        <button class="btn btn-ghost" id="loginMicrosoftBtn" style="flex:1" data-legacy-click="startSSO('microsoft')">Continue with Microsoft</button>
       </div>
     </div>
 
@@ -2483,26 +2485,26 @@ function getMascotLabel(type) {
           <div class="auth-input-wrap">
             <span class="auth-input-icon">🔒</span>
             <input class="auth-input" id="regPass" type="password" placeholder="Min 6 characters">
-            <span class="pwd-toggle" onclick="togglePwd('regPass',this)">👁️</span>
+            <span class="pwd-toggle" data-legacy-click="togglePwd('regPass',this)">👁️</span>
           </div>
         </div>
         <div class="auth-field">
           <label class="auth-label">Confirm Password <span class="req">*</span></label>
           <div class="auth-input-wrap">
             <span class="auth-input-icon">🔐</span>
-            <input class="auth-input" id="regConfirm" type="password" placeholder="Repeat password" onkeydown="if(event.key==='Enter')doRegister()">
-            <span class="pwd-toggle" onclick="togglePwd('regConfirm',this)">👁️</span>
+            <input class="auth-input" id="regConfirm" type="password" placeholder="Repeat password" data-legacy-keydown="if(event.key==='Enter')doRegister()">
+            <span class="pwd-toggle" data-legacy-click="togglePwd('regConfirm',this)">👁️</span>
           </div>
         </div>
       </div>
-      <button class="auth-btn" id="registerBtn" onclick="doRegister()">
+      <button class="auth-btn" id="registerBtn" data-legacy-click="doRegister()">
         Create Account →
       </button>
     </div>
 
     <!-- Toggle -->
     <div class="auth-toggle" id="authToggle">
-      Don't have an account? <a onclick="switchToRegister()">Register here</a>
+      Don't have an account? <a data-legacy-click="switchToRegister()">Register here</a>
     </div>
   </div>
 </div>
@@ -2514,7 +2516,7 @@ function getMascotLabel(type) {
 
   <!-- TOPBAR -->
   <header class="topbar">
-    <button class="tb-hamburger" id="tbHamburger" onclick="toggleSidebar()" title="Toggle sidebar">
+    <button class="tb-hamburger" id="tbHamburger" data-legacy-click="toggleSidebar()" title="Toggle sidebar">
       <span></span><span></span><span></span>
     </button>
     <div class="tb-brand">
@@ -2524,35 +2526,35 @@ function getMascotLabel(type) {
         <div class="tb-tag">HR Helpdesk</div>
       </div>
     </div>
-    <div class="tb-search" onclick="document.getElementById('tbSearchInp').focus()">
+    <div class="tb-search" data-legacy-click="document.getElementById('tbSearchInp').focus()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="tbSearchInp" placeholder="Search tickets, FAQs, people…" onkeydown="handleTbSearch(event)">
+      <input id="tbSearchInp" placeholder="Search tickets, FAQs, people…" data-legacy-keydown="handleTbSearch(event)">
       <span class="tb-kbd" id="tbKbd">⌘K</span>
     </div>
     <div class="tb-spacer"></div>
     <div class="tb-actions">
-      <button class="tb-btn" title="Raise a ticket" onclick="showPage('raise',document.getElementById('snav-raise'))">
+      <button class="tb-btn" title="Raise a ticket" data-legacy-click="showPage('raise',document.getElementById('snav-raise'))">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
       </button>
-      <button class="tb-btn" title="Notifications" id="notifBtn" onclick="toggleNotifications()">
+      <button class="tb-btn" title="Notifications" id="notifBtn" data-legacy-click="toggleNotifications()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="tb-notif-dot" id="notifDot"></span>
       </button>
-      <button class="tb-btn" title="Toggle theme" onclick="toggleTheme()">
+      <button class="tb-btn" title="Toggle theme" data-legacy-click="toggleTheme()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
       <div class="tb-account">
-        <button class="tb-account-btn" id="tbAccountBtn" onclick="toggleAccountMenu()" title="Me menu">
+        <button class="tb-account-btn" id="tbAccountBtn" data-legacy-click="toggleAccountMenu()" title="Me menu">
           <div class="tb-avi" id="tbAvi">A</div>
           <div class="tb-account-label">Me</div>
         </button>
         <div class="tb-menu" id="tbAccountMenu">
-          <button class="tb-menu-item" onclick="openAccountPage('profile')">👤 My Profile</button>
-          <button class="tb-menu-item admin-only" id="tbHrmsItem" style="display:none" onclick="openAccountPage('integration')">🔗 HRMS Integration</button>
-          <button class="tb-menu-item admin-only" style="display:none" onclick="openAccountPage('setup')">⚙️ Settings & Privacy</button>
-          <button class="tb-menu-item admin-only" id="tbAdminSetupItem" style="display:none" onclick="openAccountPage('setup')">🛠️ Admin Setup</button>
+          <button class="tb-menu-item" data-legacy-click="openAccountPage('profile')">👤 My Profile</button>
+          <button class="tb-menu-item admin-only" id="tbHrmsItem" style="display:none" data-legacy-click="openAccountPage('integration')">🔗 HRMS Integration</button>
+          <button class="tb-menu-item admin-only" style="display:none" data-legacy-click="openAccountPage('setup')">⚙️ Settings & Privacy</button>
+          <button class="tb-menu-item admin-only" id="tbAdminSetupItem" style="display:none" data-legacy-click="openAccountPage('setup')">🛠️ Admin Setup</button>
           <div class="tb-menu-sep"></div>
-          <button class="tb-menu-item danger" onclick="doLogout()">🚪 Sign Out</button>
+          <button class="tb-menu-item danger" data-legacy-click="doLogout()">🚪 Sign Out</button>
         </div>
       </div>
     </div>
@@ -2573,56 +2575,56 @@ function getMascotLabel(type) {
       <!-- Main -->
       <div class="sb-group">
         <div class="sb-label">Main</div>
-        <button class="sb-item admin-only" id="snav-home" style="display:none" onclick="showPage('home',this)">
-          <span class="sb-icon">🏠</span><span class="sb-text">Admin Panel</span>
+        <button class="sb-item" id="snav-home" data-legacy-click="showPage('home',this)">
+          <span class="sb-icon">🏠</span><span class="sb-text">Bloomie Home</span>
         </button>
-        <button class="sb-item" id="snav-raise" onclick="showPage('raise',this)">
+        <button class="sb-item" id="snav-raise" data-legacy-click="showPage('raise',this)">
           <span class="sb-icon">🎫</span><span class="sb-text">Raise a Ticket</span>
         </button>
-        <button class="sb-item" id="snav-track" onclick="showPage('track',this)">
+        <button class="sb-item" id="snav-track" data-legacy-click="showPage('track',this)">
           <span class="sb-icon">🔍</span><span class="sb-text">Track Ticket</span>
         </button>
-        <button class="sb-item" id="snav-chat" onclick="openBloomieChat()">
-          <span class="sb-icon">🤖</span><span class="sb-text">Ask Bloomie</span>
+        <button class="sb-item" id="snav-chat" data-legacy-click="openBloomieChat()">
+          <span class="sb-icon">🐝</span><span class="sb-text">Ask Bloomie</span>
         </button>
-        <button class="sb-item" id="snav-kb" onclick="showPage('kb',this)">
+        <button class="sb-item" id="snav-kb" data-legacy-click="showPage('kb',this)">
           <span class="sb-icon">📚</span><span class="sb-text">Knowledge Base</span>
         </button>
-        <button class="sb-item" id="snav-forum" onclick="showPage('forum',this)">
+        <button class="sb-item" id="snav-forum" data-legacy-click="showPage('forum',this)">
           <span class="sb-icon">💬</span><span class="sb-text">Community Forum</span>
         </button>
-        <button class="sb-item" onclick="filterRaise('POSH / Harassment')">
+        <button class="sb-item" data-legacy-click="filterRaise('POSH / Harassment')">
           <span class="sb-icon">🛡️</span><span class="sb-text">POSH / Safety</span>
         </button>
-        <button class="sb-item" onclick="filterRaise('Referral / Hiring')">
+        <button class="sb-item" data-legacy-click="filterRaise('Referral / Hiring')">
           <span class="sb-icon">🤝</span><span class="sb-text">Employee Referral</span>
         </button>
-        <button class="sb-item" id="snav-my" onclick="showPage('my',this)">
+        <button class="sb-item" id="snav-my" data-legacy-click="showPage('my',this)">
           <span class="sb-icon">📂</span><span class="sb-text">My Recent Tickets</span>
           <span class="sb-badge" id="snavBadgeMy" style="display:none">0</span>
         </button>
-        <button class="sb-item" id="snav-tasks" onclick="showPage('tasks',this)">
+        <button class="sb-item" id="snav-tasks" data-legacy-click="showPage('tasks',this)">
           <span class="sb-icon">🗂️</span><span class="sb-text">My Tasks</span>
           <span class="sb-badge red" id="snavBadgeTasks" style="display:none">0</span>
         </button>
-        <button class="sb-item manager-only" id="snav-conduct" style="display:none" onclick="showPage('conduct',this)">
+        <button class="sb-item manager-only" id="snav-conduct" style="display:none" data-legacy-click="showPage('conduct',this)">
           <span class="sb-icon">⚖️</span><span class="sb-text">Team Conduct</span>
         </button>
       </div>
       <!-- Admin only -->
       <div class="sb-group admin-only" id="sbAdminGroup" style="display:none">
         <div class="sb-label">Admin</div>
-        <button class="sb-item" id="snav-all" onclick="showPage('all',this)">
+        <button class="sb-item" id="snav-all" data-legacy-click="showPage('all',this)">
           <span class="sb-icon">🎯</span><span class="sb-text">All Tickets</span>
           <span class="sb-badge yellow" id="snavBadgeAll" style="display:none">0</span>
         </button>
-        <button class="sb-item" id="snav-reports" onclick="showPage('reports',this)">
+        <button class="sb-item" id="snav-reports" data-legacy-click="showPage('reports',this)">
           <span class="sb-icon">📊</span><span class="sb-text">Reports</span>
         </button>
-        <button class="sb-item" id="snav-integration" onclick="showPage('integration',this)">
+        <button class="sb-item" id="snav-integration" data-legacy-click="showPage('integration',this)">
           <span class="sb-icon">🔗</span><span class="sb-text">HRMS Integration</span>
         </button>
-        <button class="sb-item" id="snav-setup" onclick="showPage('setup',this)">
+        <button class="sb-item" id="snav-setup" data-legacy-click="showPage('setup',this)">
           <span class="sb-icon">⚙️</span><span class="sb-text">Settings</span>
         </button>
       </div>
@@ -2657,7 +2659,7 @@ function getMascotLabel(type) {
             <div class="empty-desc">Raise your first request to get started</div>
           </div>
         </div>
-        <button class="btn btn-ghost btn-sm" id="homeRecentBtn" style="width:100%;margin-top:8px;justify-content:center" onclick="showPage('my',document.getElementById('snav-my'))">View all recent tickets →</button>
+        <button class="btn btn-ghost btn-sm" id="homeRecentBtn" style="width:100%;margin-top:8px;justify-content:center" data-legacy-click="showPage('my',document.getElementById('snav-my'))">View all recent tickets →</button>
       </div>
 
     </div>
@@ -2763,23 +2765,23 @@ function getMascotLabel(type) {
           </div>
           <div class="form-group full">
             <label class="form-label">Supporting Documents <span style="font-size:11px;color:var(--sub);font-weight:400">(optional — max 5 files, 10MB each)</span></label>
-            <div class="upload-zone" onclick="document.getElementById('hdFileInput').click()">
+            <div class="upload-zone" data-legacy-click="document.getElementById('hdFileInput').click()">
               <span class="uz-icon">📎</span>
               <div class="uz-text">Click to attach files</div>
               <div class="uz-sub" id="hdFileList">Images, PDF, Word, Excel accepted</div>
             </div>
-            <input type="file" id="hdFileInput" style="display:none" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" onchange="handleHdFiles(this)">
+            <input type="file" id="hdFileInput" style="display:none" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" data-legacy-change="handleHdFiles(this)">
           </div>
         </div>
 
-        <button class="submit-btn" onclick="submitHelpdesk()" id="hdBtn">Submit Request →</button>
+        <button class="submit-btn" data-legacy-click="submitHelpdesk()" id="hdBtn">Submit Request →</button>
 
         <div class="ticket-result" id="ticketResult">
           <div class="tr-icon">🎫</div>
           <div class="tr-num" id="ticketNum">BHG-HD-0000</div>
           <div class="tr-desc">Your ticket has been submitted successfully. Our HR team will respond within the SLA window. You can track your ticket using the number above.</div>
-          <button class="tr-copy" onclick="copyTicket()">📋 Copy Ticket Number</button>
-          <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="showPage('track',document.getElementById('snav-track'))">🔍 Track this ticket →</button>
+          <button class="tr-copy" data-legacy-click="copyTicket()">📋 Copy Ticket Number</button>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px" data-legacy-click="showPage('track',document.getElementById('snav-track'))">🔍 Track this ticket →</button>
         </div>
       </div>
     </div>
@@ -2798,13 +2800,13 @@ function getMascotLabel(type) {
       <div class="filter-bar">
         <div class="search-mini">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input placeholder="Search my tickets…" oninput="filterMyTickets(this.value)" id="mySearchInp">
+          <input placeholder="Search my tickets…" data-legacy-input="filterMyTickets(this.value)" id="mySearchInp">
         </div>
-        <button class="filter-chip active" onclick="filterMyStatus('all',this)">All</button>
-        <button class="filter-chip" onclick="filterMyStatus('open',this)">Open</button>
-        <button class="filter-chip" onclick="filterMyStatus('in-progress',this)">In Progress</button>
-        <button class="filter-chip" onclick="filterMyStatus('resolved',this)">Resolved</button>
-        <button class="filter-chip" onclick="filterMyStatus('escalated',this)">Escalated</button>
+        <button class="filter-chip active" data-legacy-click="filterMyStatus('all',this)">All</button>
+        <button class="filter-chip" data-legacy-click="filterMyStatus('open',this)">Open</button>
+        <button class="filter-chip" data-legacy-click="filterMyStatus('in-progress',this)">In Progress</button>
+        <button class="filter-chip" data-legacy-click="filterMyStatus('resolved',this)">Resolved</button>
+        <button class="filter-chip" data-legacy-click="filterMyStatus('escalated',this)">Escalated</button>
       </div>
 
       <div id="myTicketsTable">
@@ -2812,7 +2814,7 @@ function getMascotLabel(type) {
           <div class="empty-icon">📭</div>
           <div class="empty-title">No tickets yet</div>
           <div class="empty-desc">Raise your first HR request and it will appear here</div>
-          <button class="btn btn-primary" style="margin-top:16px" onclick="showPage('raise',document.getElementById('snav-raise'))">🎫 Raise a Ticket</button>
+          <button class="btn btn-primary" style="margin-top:16px" data-legacy-click="showPage('raise',document.getElementById('snav-raise'))">🎫 Raise a Ticket</button>
         </div>
       </div>
     </div>
@@ -2914,7 +2916,7 @@ function getMascotLabel(type) {
               <textarea class="form-textarea" id="conductDetails" placeholder="Add the summary, expected behaviour change, and anything the employee must acknowledge." style="min-height:118px"></textarea>
             </div>
           </div>
-          <button class="btn btn-primary" id="conductSubmitBtn" onclick="submitConductAction()">Share with Employee →</button>
+          <button class="btn btn-primary" id="conductSubmitBtn" data-legacy-click="submitConductAction()">Share with Employee →</button>
         </div>
 
         <div class="card">
@@ -2945,8 +2947,8 @@ function getMascotLabel(type) {
       <div class="card" style="max-width:500px;margin-bottom:20px">
         <div class="card-title" style="margin-bottom:12px">Enter Ticket Number</div>
         <div style="display:flex;gap:10px">
-          <input class="form-input" id="trackInp" placeholder="e.g. BHG-HD-2024-001" style="flex:1" onkeydown="if(event.key==='Enter')trackTicket()">
-          <button class="btn btn-primary" onclick="trackTicket()">Track →</button>
+          <input class="form-input" id="trackInp" placeholder="e.g. BHG-HD-2024-001" style="flex:1" data-legacy-keydown="if(event.key==='Enter')trackTicket()">
+          <button class="btn btn-primary" data-legacy-click="trackTicket()">Track →</button>
         </div>
       </div>
 
@@ -3012,38 +3014,38 @@ function getMascotLabel(type) {
       <div class="filter-bar" style="margin-bottom:20px">
         <div class="search-mini" style="max-width:360px">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input placeholder="Search knowledge base…" oninput="filterKB(this.value)" id="kbSearchInp">
+          <input placeholder="Search knowledge base…" data-legacy-input="filterKB(this.value)" id="kbSearchInp">
         </div>
       </div>
 
       <!-- Category cards -->
       <div class="kb-grid" id="kbCatGrid">
-        <div class="kb-card" onclick="filterKBCat('leave')">
+        <div class="kb-card" data-legacy-click="filterKBCat('leave')">
           <div class="kb-card-icon">🗓️</div>
           <div class="kb-card-title">Leave & Attendance</div>
           <div class="kb-card-count">12 articles</div>
         </div>
-        <div class="kb-card" onclick="filterKBCat('payroll')">
+        <div class="kb-card" data-legacy-click="filterKBCat('payroll')">
           <div class="kb-card-icon">💰</div>
           <div class="kb-card-title">Payroll & Benefits</div>
           <div class="kb-card-count">8 articles</div>
         </div>
-        <div class="kb-card" onclick="filterKBCat('posh')">
+        <div class="kb-card" data-legacy-click="filterKBCat('posh')">
           <div class="kb-card-icon">🛡️</div>
           <div class="kb-card-title">POSH & Safety</div>
           <div class="kb-card-count">6 articles</div>
         </div>
-        <div class="kb-card" onclick="filterKBCat('exit')">
+        <div class="kb-card" data-legacy-click="filterKBCat('exit')">
           <div class="kb-card-icon">🚪</div>
           <div class="kb-card-title">Exit & Separation</div>
           <div class="kb-card-count">7 articles</div>
         </div>
-        <div class="kb-card" onclick="filterKBCat('onboard')">
+        <div class="kb-card" data-legacy-click="filterKBCat('onboard')">
           <div class="kb-card-icon">🌱</div>
           <div class="kb-card-title">Onboarding</div>
           <div class="kb-card-count">9 articles</div>
         </div>
-        <div class="kb-card" onclick="filterKBCat('policy')">
+        <div class="kb-card" data-legacy-click="filterKBCat('policy')">
           <div class="kb-card-icon">📋</div>
           <div class="kb-card-title">HR Policies</div>
           <div class="kb-card-count">15 articles</div>
@@ -3056,68 +3058,68 @@ function getMascotLabel(type) {
         <div id="kbFaqList">
           <!-- Leave & Attendance -->
           <div class="kb-faq" data-cat="leave">
-            <div class="kb-q" onclick="toggleFaq(this)">How many casual leaves am I entitled to? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">How many casual leaves am I entitled to? <span class="chev">▼</span></div>
             <div class="kb-a">Employees are entitled to 12 Casual Leaves (CL) per calendar year, credited at 1 per month from the date of joining. CL can be taken in minimum half-day increments and cannot be carried forward.</div>
           </div>
           <div class="kb-faq" data-cat="leave">
-            <div class="kb-q" onclick="toggleFaq(this)">How do I apply for leave? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">How do I apply for leave? <span class="chev">▼</span></div>
             <div class="kb-a">Leave must be applied at least 48 hours in advance (except for emergencies) via your HRMS portal or by informing your immediate supervisor. Emergency leaves can be applied on the same day with manager approval.</div>
           </div>
           <div class="kb-faq" data-cat="leave">
-            <div class="kb-q" onclick="toggleFaq(this)">What is the encashment policy for earned leaves? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">What is the encashment policy for earned leaves? <span class="chev">▼</span></div>
             <div class="kb-a">Earned Leaves (EL) accumulate at 1.25 days per month (15 per year). You can encash up to 50% of accumulated EL (max 30 days) once per year in October. Minimum 15 days must be maintained in your balance.</div>
           </div>
           <div class="kb-faq" data-cat="leave">
-            <div class="kb-q" onclick="toggleFaq(this)">How do I correct a wrong attendance punch? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">How do I correct a wrong attendance punch? <span class="chev">▼</span></div>
             <div class="kb-a">Raise an attendance regularisation request via the helpdesk within 7 days of the incorrect entry. Provide the correct punch time, reason, and manager approval. Corrections beyond 7 days require HR Head approval.</div>
           </div>
           <!-- Payroll -->
           <div class="kb-faq" data-cat="payroll">
-            <div class="kb-q" onclick="toggleFaq(this)">When is salary credited? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">When is salary credited? <span class="chev">▼</span></div>
             <div class="kb-a">Salaries are processed by the 28th of each month and credited to bank accounts by the last working day. In months with holidays, processing may be done 2 days earlier to ensure timely credit.</div>
           </div>
           <div class="kb-faq" data-cat="payroll">
-            <div class="kb-q" onclick="toggleFaq(this)">How do I get my payslip? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">How do I get my payslip? <span class="chev">▼</span></div>
             <div class="kb-a">Payslips are available in your HRMS portal under Payroll &gt; Payslips. You can download PDF copies for any month. Physical copies can be requested from HR if required for official purposes.</div>
           </div>
           <div class="kb-faq" data-cat="payroll">
-            <div class="kb-q" onclick="toggleFaq(this)">What is the process to update my bank details? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">What is the process to update my bank details? <span class="chev">▼</span></div>
             <div class="kb-a">Submit a bank detail update request through the helpdesk with: a cancelled cheque or bank passbook photo, your employee ID, and HR approval. Updates take effect from the next payroll cycle.</div>
           </div>
           <!-- POSH -->
           <div class="kb-faq" data-cat="posh">
-            <div class="kb-q" onclick="toggleFaq(this)">How do I file a POSH complaint? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">How do I file a POSH complaint? <span class="chev">▼</span></div>
             <div class="kb-a">File a written complaint with the Internal Complaints Committee (ICC) within 3 months of the incident. Use the confidential POSH category when raising a helpdesk ticket, or email the ICC directly. All complaints are handled with strict confidentiality.</div>
           </div>
           <div class="kb-faq" data-cat="posh">
-            <div class="kb-q" onclick="toggleFaq(this)">Who are the ICC members? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">Who are the ICC members? <span class="chev">▼</span></div>
             <div class="kb-a">The ICC comprises: a Presiding Officer (senior woman employee), 2 internal members, 1 external member (NGO/legal background). Details are displayed on the HR notice board at each property and available from HR.</div>
           </div>
           <!-- Exit -->
           <div class="kb-faq" data-cat="exit">
-            <div class="kb-q" onclick="toggleFaq(this)">What is the notice period for resignation? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">What is the notice period for resignation? <span class="chev">▼</span></div>
             <div class="kb-a">Notice periods are role-dependent: Junior staff (below Executive level) — 30 days; Executive to Manager level — 60 days; Senior Manager and above — 90 days. Notice can be served or bought out with mutual agreement.</div>
           </div>
           <div class="kb-faq" data-cat="exit">
-            <div class="kb-q" onclick="toggleFaq(this)">How is Full & Final settlement calculated? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">How is Full & Final settlement calculated? <span class="chev">▼</span></div>
             <div class="kb-a">F&F includes: pending salary, leave encashment (as per policy), gratuity (if eligible: 5+ years), any reimbursements due. F&F is processed within 45 days of the last working day after clearance from all departments.</div>
           </div>
           <!-- Onboarding -->
           <div class="kb-faq" data-cat="onboard">
-            <div class="kb-q" onclick="toggleFaq(this)">What documents are required for joining? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">What documents are required for joining? <span class="chev">▼</span></div>
             <div class="kb-a">Documents required: Offer letter acceptance, ID proof (Aadhaar/Passport/Driving licence), PAN card, last 3 months' salary slips, relieving letter from previous employer, educational certificates, 2 passport photos, bank details. All originals must be verified.</div>
           </div>
           <div class="kb-faq" data-cat="onboard">
-            <div class="kb-q" onclick="toggleFaq(this)">How long is the probation period? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">How long is the probation period? <span class="chev">▼</span></div>
             <div class="kb-a">The standard probation period is 6 months from the date of joining. Confirmation is subject to performance review by the reporting manager and HR. Probation may be extended by up to 3 months if required.</div>
           </div>
           <!-- Policy -->
           <div class="kb-faq" data-cat="policy">
-            <div class="kb-q" onclick="toggleFaq(this)">What is the dress code policy? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">What is the dress code policy? <span class="chev">▼</span></div>
             <div class="kb-a">Guest-facing roles: Uniform as provided must be worn at all times during duty. Back-office roles: Smart casual / business casual is expected. Jeans with formal tops are permitted for non-guest-facing departments on working days.</div>
           </div>
           <div class="kb-faq" data-cat="policy">
-            <div class="kb-q" onclick="toggleFaq(this)">What is the mobile phone policy during duty? <span class="chev">▼</span></div>
+            <div class="kb-q" data-legacy-click="toggleFaq(this)">What is the mobile phone policy during duty? <span class="chev">▼</span></div>
             <div class="kb-a">Personal mobile phones are not permitted in guest areas or kitchen. Back-office staff may use phones for work purposes. Violation may result in disciplinary action. Emergency contact can be made via the department manager.</div>
           </div>
         </div>
@@ -3132,32 +3134,32 @@ function getMascotLabel(type) {
     <div class="page-scroll">
       <div class="page-head">
         <div class="page-title">💬 Community <em>Forum</em></div>
-        <div class="page-desc">Peer-to-peer help, reusable resolutions, and Bloomie AI assisted guidance before issues become tickets.</div>
+        <div class="page-desc">Peer-to-peer help, reusable resolutions, and Bloomie-guided support before issues become tickets.</div>
       </div>
 
       <div class="forum-grid-top">
         <div class="forum-panel">
           <div class="forum-panel-head">
             <div class="card-title">Forum Vision</div>
-            <div class="card-desc" style="margin-top:6px">A strong helpdesk forum deflects repeat tickets, surfaces trusted answers, and escalates only when confidentiality is required.</div>
+            <div class="card-desc" style="margin-top:6px">A strong helpdesk forum deflects repeat tickets, surfaces reusable answers, and escalates only when confidentiality is required.</div>
             <div class="forum-meta-row">
-              <div class="forum-pill">Bloomie AI triage</div>
+              <div class="forum-pill">Bloomie guided routing</div>
               <div class="forum-pill">Accepted solutions</div>
               <div class="forum-pill">Knowledge reuse</div>
             </div>
           </div>
           <div class="forum-panel-body">
             <div class="forum-inline" style="margin-bottom:12px">
-              <button class="filter-chip active" data-forum-cat="all" onclick="setForumCategory('all',this)">All</button>
-              <button class="filter-chip" data-forum-cat="payroll" onclick="setForumCategory('payroll',this)">Payroll</button>
-              <button class="filter-chip" data-forum-cat="leave" onclick="setForumCategory('leave',this)">Leave</button>
-              <button class="filter-chip" data-forum-cat="policy" onclick="setForumCategory('policy',this)">Policy</button>
-              <button class="filter-chip" data-forum-cat="it" onclick="setForumCategory('it',this)">IT</button>
-              <button class="filter-chip" data-forum-cat="culture" onclick="setForumCategory('culture',this)">Culture</button>
+              <button class="filter-chip active" data-forum-cat="all" data-legacy-click="setForumCategory('all',this)">All</button>
+              <button class="filter-chip" data-forum-cat="payroll" data-legacy-click="setForumCategory('payroll',this)">Payroll</button>
+              <button class="filter-chip" data-forum-cat="leave" data-legacy-click="setForumCategory('leave',this)">Leave</button>
+              <button class="filter-chip" data-forum-cat="policy" data-legacy-click="setForumCategory('policy',this)">Policy</button>
+              <button class="filter-chip" data-forum-cat="it" data-legacy-click="setForumCategory('it',this)">IT</button>
+              <button class="filter-chip" data-forum-cat="culture" data-legacy-click="setForumCategory('culture',this)">Culture</button>
             </div>
             <div class="search-mini" style="max-width:none;margin-bottom:14px">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <input placeholder="Search discussions, keywords, or tags…" id="forumSearchInp" oninput="filterForumPosts(this.value)">
+              <input placeholder="Search discussions, keywords, or tags…" id="forumSearchInp" data-legacy-input="filterForumPosts(this.value)">
             </div>
             <div class="forum-board-list" id="forumBoardList"></div>
           </div>
@@ -3193,7 +3195,7 @@ function getMascotLabel(type) {
                 <label class="form-label">Question <span class="req">*</span></label>
                 <textarea class="form-textarea" id="forumBodyInp" placeholder="Describe the issue clearly so the next employee can benefit from the answer too." style="min-height:132px"></textarea>
               </div>
-              <button class="btn btn-primary" onclick="submitForumPost()">Post to Forum →</button>
+              <button class="btn btn-primary" data-legacy-click="submitForumPost()">Post to Forum →</button>
             </div>
           </div>
         </div>
@@ -3233,7 +3235,7 @@ function getMascotLabel(type) {
         <div class="forum-panel">
           <div class="forum-panel-head">
             <div class="card-title">Selected Thread</div>
-            <div class="card-desc" style="margin-top:6px">Open a discussion from the board to review the conversation, accepted solution, and Bloomie AI guidance.</div>
+            <div class="card-desc" style="margin-top:6px">Open a discussion from the board to review the conversation, accepted solution, and Bloomie guidance.</div>
           </div>
           <div class="forum-panel-body">
             <div class="forum-thread-shell" id="forumThreadShell"></div>
@@ -3250,38 +3252,49 @@ function getMascotLabel(type) {
     <div class="chat-container">
       <!-- Chat sidebar -->
       <div class="chat-sidebar">
-        <button class="new-chat-btn" onclick="clearChat()">
+        <button class="new-chat-btn" data-legacy-click="clearChat()">
           New Conversation
         </button>
         <div class="chat-topic-label">Quick Topics</div>
-        <div class="chat-topic active" onclick="chatTopic(this,'leave')">🗓️ Leave Balance</div>
-        <div class="chat-topic" onclick="chatTopic(this,'payroll')">💰 Payroll Query</div>
-        <div class="chat-topic" onclick="chatTopic(this,'ticket')">🎫 Ticket Status</div>
-        <div class="chat-topic" onclick="chatTopic(this,'policy')">📋 HR Policy</div>
-        <div class="chat-topic" onclick="chatTopic(this,'posh')">🛡️ POSH / Safety</div>
-        <div class="chat-topic" onclick="chatTopic(this,'exit')">🚪 Exit Process</div>
-        <div class="chat-topic" onclick="chatTopic(this,'onboard')">🌱 Onboarding</div>
-        <div class="chat-topic" onclick="chatTopic(this,'benefits')">🏥 Benefits</div>
+        <div class="chat-topic active" data-legacy-click="chatTopic(this,'leave')">🗓️ Leave Balance</div>
+        <div class="chat-topic" data-legacy-click="chatTopic(this,'payroll')">💰 Payroll Query</div>
+        <div class="chat-topic" data-legacy-click="chatTopic(this,'ticket')">🎫 Ticket Status</div>
+        <div class="chat-topic" data-legacy-click="chatTopic(this,'policy')">📋 HR Policy</div>
+        <div class="chat-topic" data-legacy-click="chatTopic(this,'posh')">🛡️ POSH / Safety</div>
+        <div class="chat-topic" data-legacy-click="chatTopic(this,'exit')">🚪 Exit Process</div>
+        <div class="chat-topic" data-legacy-click="chatTopic(this,'onboard')">🌱 Onboarding</div>
+        <div class="chat-topic" data-legacy-click="chatTopic(this,'benefits')">🏥 Benefits</div>
       </div>
       <!-- Chat main -->
       <div class="chat-main">
         <div class="chat-head">
           <div class="chat-mascot-mini" id="chatMascotMini"></div>
           <div class="chat-head-info">
-            <div class="chat-head-title">Bloomie Assistant <span class="chat-status-dot"></span> Online</div>
+            <div class="chat-head-title">Bloomie Guided Assistant <span class="chat-status-dot"></span> Online</div>
             <div class="chat-head-sub">Your smart local helpdesk assistant tuned for HR policies, leave, payroll, and operational support</div>
           </div>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-footer">
           <div class="chat-suggestions" id="chatSugs">
-            <button class="chat-sug" onclick="sendChatMsg(this.textContent)">How many leaves do I have?</button>
-            <button class="chat-sug" onclick="sendChatMsg(this.textContent)">When is salary credited?</button>
-            <button class="chat-sug" onclick="sendChatMsg(this.textContent)">How to raise a POSH complaint?</button>
+            <button class="chat-sug" data-legacy-click="sendChatMsg(this.textContent)">How many leaves do I have?</button>
+            <button class="chat-sug" data-legacy-click="sendChatMsg(this.textContent)">When is salary credited?</button>
+            <button class="chat-sug" data-legacy-click="sendChatMsg(this.textContent)">How to raise a POSH complaint?</button>
+          </div>
+          <div style="margin-top:10px;padding:10px 12px;border:1px dashed var(--b1);border-radius:16px;background:rgba(255,255,255,.02)">
+            <input type="file" id="chatImageInput" accept="image/*" style="display:none" data-legacy-change="handleChatImageInput(event)">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button class="btn btn-secondary" type="button" data-legacy-click="document.getElementById('chatImageInput').click()">🖼️ Add Edit Image</button>
+              <button class="btn" type="button" data-legacy-click="clearChatImageDraft()">Clear</button>
+              <button class="chat-sug" type="button" data-legacy-click="prefillImageEditPrompt('Swap the background for a premium hotel lobby while keeping the main subject untouched.')">Swap background</button>
+              <button class="chat-sug" type="button" data-legacy-click="prefillImageEditPrompt('Remove the unwanted object and rebuild the scene naturally with realistic lighting.')">Remove object</button>
+              <button class="chat-sug" type="button" data-legacy-click="prefillImageEditPrompt('Transform this into a polished luxury campaign visual with premium lighting and art direction.')">Campaign restyle</button>
+            </div>
+            <div id="chatImageDraft" style="display:none;margin-top:10px"></div>
           </div>
           <div class="chat-input-wrap" style="margin-top:8px">
-            <textarea id="chatInp" placeholder="Ask Bloomie about policy, payroll, leave, onboarding, or ticket routing…" rows="1" onkeydown="handleChatKey(event)" oninput="autoGrowChat(this)"></textarea>
-            <button class="send-btn" onclick="sendChat()">↑</button>
+            <textarea id="chatInp" placeholder="Ask Bloomie about policy, payroll, leave, onboarding, or ticket routing from configured sources…" rows="1" data-legacy-keydown="handleChatKey(event)" data-legacy-input="autoGrowChat(this)"></textarea>
+            <button class="send-btn" data-legacy-click="sendChat()">↑</button>
           </div>
         </div>
       </div>
@@ -3301,9 +3314,9 @@ function getMascotLabel(type) {
       <div class="filter-bar">
         <div class="search-mini">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input placeholder="Search tickets…" oninput="filterAllTickets(this.value)">
+          <input placeholder="Search tickets…" data-legacy-input="filterAllTickets(this.value)">
         </div>
-        <select class="form-select" style="height:36px;font-size:12.5px;padding:0 10px;width:auto" onchange="filterAllStatus(this.value)">
+        <select class="form-select" style="height:36px;font-size:12.5px;padding:0 10px;width:auto" data-legacy-change="filterAllStatus(this.value)">
           <option value="">All Status</option>
           <option value="open">Open</option>
           <option value="in-progress">In Progress</option>
@@ -3311,14 +3324,14 @@ function getMascotLabel(type) {
           <option value="escalated">Escalated</option>
           <option value="closed">Closed</option>
         </select>
-        <select class="form-select" style="height:36px;font-size:12.5px;padding:0 10px;width:auto" onchange="filterAllPriority(this.value)">
+        <select class="form-select" style="height:36px;font-size:12.5px;padding:0 10px;width:auto" data-legacy-change="filterAllPriority(this.value)">
           <option value="">All Priority</option>
           <option value="critical">Critical</option>
           <option value="high">High</option>
           <option value="medium">Medium</option>
           <option value="low">Low</option>
         </select>
-        <button class="btn btn-secondary btn-sm" onclick="exportTickets()">📥 Export CSV</button>
+        <button class="btn btn-secondary btn-sm" data-legacy-click="exportTickets()">📥 Export CSV</button>
       </div>
 
       <div id="allTicketsTable">
@@ -3393,38 +3406,38 @@ function getMascotLabel(type) {
     <div class="page-scroll">
       <div class="page-head">
         <div class="page-title">🔗 HRMS <em>Integration</em></div>
-        <div class="page-desc">Connect Bloomie Helpdesk with your HRMS to enable auto-fill, leave data, and employee lookup.</div>
+        <div class="page-desc">Connect Bloomie with your HRMS to enable auto-fill, leave data, and employee lookup.</div>
       </div>
 
       <div class="card" style="max-width:700px;margin-bottom:20px">
         <div class="card-title" style="margin-bottom:16px">Select your HRMS Platform</div>
         <div class="hrms-grid" id="hrmsGrid">
-          <div class="hrms-option" onclick="selectHRMS('keka',this)">
+          <div class="hrms-option" data-legacy-click="selectHRMS('keka',this)">
             <div class="hrms-logo">🌿</div>
             <div class="hrms-name">Keka HR</div>
             <div class="hrms-status" id="hStatus-keka">Not connected</div>
           </div>
-          <div class="hrms-option" onclick="selectHRMS('darwinbox',this)">
+          <div class="hrms-option" data-legacy-click="selectHRMS('darwinbox',this)">
             <div class="hrms-logo">🦋</div>
             <div class="hrms-name">Darwinbox</div>
             <div class="hrms-status" id="hStatus-darwinbox">Not connected</div>
           </div>
-          <div class="hrms-option" onclick="selectHRMS('hrone',this)">
+          <div class="hrms-option" data-legacy-click="selectHRMS('hrone',this)">
             <div class="hrms-logo">⚙️</div>
             <div class="hrms-name">HR One</div>
             <div class="hrms-status" id="hStatus-hrone">Not connected</div>
           </div>
-          <div class="hrms-option" onclick="selectHRMS('greythr',this)">
+          <div class="hrms-option" data-legacy-click="selectHRMS('greythr',this)">
             <div class="hrms-logo">🌀</div>
             <div class="hrms-name">greytHR</div>
             <div class="hrms-status" id="hStatus-greythr">Not connected</div>
           </div>
-          <div class="hrms-option" onclick="selectHRMS('bamboohr',this)">
+          <div class="hrms-option" data-legacy-click="selectHRMS('bamboohr',this)">
             <div class="hrms-logo">🎋</div>
             <div class="hrms-name">BambooHR</div>
             <div class="hrms-status" id="hStatus-bamboohr">Not connected</div>
           </div>
-          <div class="hrms-option" onclick="selectHRMS('custom',this)">
+          <div class="hrms-option" data-legacy-click="selectHRMS('custom',this)">
             <div class="hrms-logo">🔧</div>
             <div class="hrms-name">Custom / API</div>
             <div class="hrms-status" id="hStatus-custom">Configure URL</div>
@@ -3478,9 +3491,9 @@ function getMascotLabel(type) {
           </div>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="testHRMSConn()">🔌 Test Connection</button>
-          <button class="btn btn-secondary" onclick="saveHRMSConfig()">💾 Save Configuration</button>
-          <button class="btn btn-ghost" onclick="syncNow()">🔄 Sync Now</button>
+          <button class="btn btn-primary" data-legacy-click="testHRMSConn()">🔌 Test Connection</button>
+          <button class="btn btn-secondary" data-legacy-click="saveHRMSConfig()">💾 Save Configuration</button>
+          <button class="btn btn-ghost" data-legacy-click="syncNow()">🔄 Sync Now</button>
         </div>
         <div id="hrmsConnStatus" style="margin-top:12px;display:none;font-size:13px;font-family:var(--font-ui)"></div>
       </div>
@@ -3499,14 +3512,14 @@ function getMascotLabel(type) {
             <div class="tl-dot">🔄</div>
             <div class="tl-content">
               <div class="tl-title">Data syncs automatically</div>
-              <div class="tl-meta">Leave balances, attendance records, and employee data sync from your HRMS. Bloomie AI uses this data to answer employee queries accurately.</div>
+              <div class="tl-meta">Leave balances, attendance records, and employee data sync from your HRMS. Bloomie uses this data as one input for guided answers.</div>
             </div>
           </div>
           <div class="tl-item">
-            <div class="tl-dot">🤖</div>
+            <div class="tl-dot">🐝</div>
             <div class="tl-content">
-              <div class="tl-title">Bloomie AI gets smarter</div>
-              <div class="tl-meta">With HRMS data, Bloomie can answer "How many leaves do I have?" or "Is my attendance regularised?" with real-time accuracy.</div>
+              <div class="tl-title">Bloomie guidance improves</div>
+              <div class="tl-meta">With HRMS data and approved sources, Bloomie can answer "How many leaves do I have?" or "Is my attendance regularised?" with current configured context.</div>
             </div>
           </div>
           <div class="tl-item">
@@ -3528,7 +3541,7 @@ function getMascotLabel(type) {
     <div class="page-scroll">
       <div class="page-head">
         <div class="page-title">⚙️ <em>Settings</em></div>
-        <div class="page-desc">Configure Bloomie Helpdesk for your organisation.</div>
+        <div class="page-desc">Configure Bloomie for your organisation.</div>
       </div>
 
       <div class="grid-2">
@@ -3546,11 +3559,11 @@ function getMascotLabel(type) {
             <label class="form-label">Portal URL / Identifier</label>
             <input class="form-input" id="setupPortalUrl" placeholder="e.g. bloom.bloomie.hr">
           </div>
-          <button class="btn btn-primary" onclick="saveOrgSettings()">💾 Save</button>
+          <button class="btn btn-primary" data-legacy-click="saveOrgSettings()">💾 Save</button>
         </div>
 
         <div class="card">
-          <div class="card-title" style="margin-bottom:14px">🤖 Bloomie Assistant</div>
+          <div class="card-title" style="margin-bottom:14px">🐝 Bloomie Assistant</div>
           <div class="form-group" style="margin-bottom:12px">
             <label class="form-label">Mascot Character</label>
             <div class="mascot-opts" id="setupMascotOpts"></div>
@@ -3592,7 +3605,109 @@ function getMascotLabel(type) {
               <span>Enable mascot animation</span>
             </label>
           </div>
-          <button class="btn btn-secondary" id="saveAiSettingsBtn" onclick="saveAISettings()">💾 Save AI Settings</button>
+          <button class="btn btn-secondary" id="saveAiSettingsBtn" data-legacy-click="saveAISettings()">💾 Save AI Settings</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px">🖼️ Generative Image Edit</div>
+          <div class="card-desc" style="margin-bottom:14px">Connect a real local or remote image-edit model so Bloomie can handle background swaps, object removal, and campaign-style transformations from chat.</div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Provider</label>
+            <select class="form-select" id="setupImageEditProvider" data-legacy-change="handleImageEditProviderChange()">
+              <option value="disabled">Disabled</option>
+              <option value="comfyui">ComfyUI (local or remote)</option>
+              <option value="stability">Stability AI</option>
+              <option value="custom">Custom JSON webhook</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Endpoint URL</label>
+            <input class="form-input" id="setupImageEditEndpoint" placeholder="http://127.0.0.1:8188 or remote API URL">
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">API Key</label>
+            <input class="form-input" id="setupImageEditApiKey" placeholder="Optional for ComfyUI, usually required for remote APIs">
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Model / Engine</label>
+            <input class="form-input" id="setupImageEditModel" placeholder="e.g. stable-diffusion-xl-1024-v1-0">
+          </div>
+          <div id="setupComfyFields" style="display:none">
+            <div class="form-group" style="margin-bottom:12px">
+              <label class="form-label">ComfyUI Workflow JSON</label>
+              <textarea class="form-input" id="setupImageEditWorkflow" rows="6" placeholder='Paste the ComfyUI API workflow JSON here'></textarea>
+            </div>
+            <div class="grid-2" style="gap:10px">
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Prompt Node ID</label>
+                <input class="form-input" id="setupImageEditPromptNodeId" placeholder="6">
+              </div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Prompt Input Name</label>
+                <input class="form-input" id="setupImageEditPromptInputName" placeholder="text">
+              </div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Image Node ID</label>
+                <input class="form-input" id="setupImageEditImageNodeId" placeholder="1">
+              </div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Image Input Name</label>
+                <input class="form-input" id="setupImageEditImageInputName" placeholder="image">
+              </div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Mask Node ID</label>
+                <input class="form-input" id="setupImageEditMaskNodeId" placeholder="Optional">
+              </div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Mask Input Name</label>
+                <input class="form-input" id="setupImageEditMaskInputName" placeholder="image">
+              </div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Output Node ID</label>
+                <input class="form-input" id="setupImageEditOutputNodeId" placeholder="Optional preferred output node">
+              </div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Strength Node ID</label>
+                <input class="form-input" id="setupImageEditStrengthNodeId" placeholder="Optional">
+              </div>
+            </div>
+          </div>
+          <div id="setupImageEditStatus" style="font-size:12px;color:var(--sub);font-family:var(--font-ui);margin-bottom:14px">Image editing is currently disabled.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-secondary" data-legacy-click="saveImageEditSettings()">💾 Save Image Edit</button>
+            <button class="btn" data-legacy-click="loadImageEditStatus(true)">🧪 Test Connection</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px">🤖 Live Agents & Functions</div>
+          <div class="card-desc" style="margin-bottom:14px">Bloomie now reads actual running backend functions here. Use this panel to confirm what the live agent can call right now.</div>
+          <div style="padding:12px 14px;border:1px solid var(--b1);border-radius:var(--r12);background:var(--card2);margin-bottom:14px">
+            <div style="font:700 13px var(--font-ui);color:var(--white);margin-bottom:8px">Protective Layer</div>
+            <label class="form-check" style="margin-bottom:8px">
+              <input type="checkbox" id="setupBotApprovalRequired" checked>
+              <span>Require my approval before any bot runs</span>
+            </label>
+            <label class="form-check" style="margin-bottom:8px">
+              <input type="checkbox" id="setupBotApprovalLiveAgent" checked>
+              <span>Protect live agent calls</span>
+            </label>
+            <label class="form-check" style="margin-bottom:8px">
+              <input type="checkbox" id="setupBotApprovalImageEdit" checked>
+              <span>Protect image edit calls</span>
+            </label>
+            <label class="form-check" style="margin-bottom:12px">
+              <input type="checkbox" id="setupBotApprovalBrowserAgent" checked>
+              <span>Protect browser-agent calls</span>
+            </label>
+            <div id="botProtectionStatus" class="card-desc" style="margin-bottom:12px">Approval gate is enabled for this workspace.</div>
+            <button class="btn btn-secondary" data-legacy-click="saveBotProtectionSettings()">💾 Save Bot Protection</button>
+          </div>
+          <div id="liveAgentStatusSummary" class="card-desc" style="margin-bottom:12px">Sign in through the backend to load live agent status.</div>
+          <div id="liveAgentFunctionList" style="display:grid;gap:10px"></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+            <button class="btn btn-secondary" data-legacy-click="loadLiveAgentStatus(true)">↻ Refresh Live Functions</button>
+          </div>
         </div>
 
         <div class="card">
@@ -3613,7 +3728,7 @@ function getMascotLabel(type) {
             <label class="form-label">Low Priority (days)</label>
             <input class="form-input" id="slaLow" type="number" value="7">
           </div>
-          <button class="btn btn-secondary" onclick="saveSLASettings()">💾 Save SLA</button>
+          <button class="btn btn-secondary" data-legacy-click="saveSLASettings()">💾 Save SLA</button>
         </div>
 
         <div class="card">
@@ -3622,6 +3737,23 @@ function getMascotLabel(type) {
             <label class="form-label">Master Password</label>
             <input class="form-input" id="setupMasterPwd" type="password" placeholder="••••••••">
           </div>
+          <div class="form-group" style="margin-bottom:10px">
+            <label class="form-check">
+              <input type="checkbox" id="setupAllowSelfRegistration">
+              <span>Allow employee self-registration</span>
+            </label>
+          </div>
+          <div class="form-group" style="margin-bottom:10px">
+            <label class="form-check">
+              <input type="checkbox" id="setupAllowManagerSelfRegistration">
+              <span>Allow manager self-registration</span>
+            </label>
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Allowed Email Domains</label>
+            <input class="form-input" id="setupRegistrationDomains" placeholder="company.com, subsidiary.in">
+          </div>
+          <div class="card-desc" style="margin-bottom:16px">Keep this invite-only for most customer launches. Only enable self-registration when you trust the company domain controls and onboarding path.</div>
           <div class="form-group" style="margin-bottom:16px">
             <label class="form-check">
               <input type="checkbox" id="setupAnon" checked>
@@ -3629,7 +3761,10 @@ function getMascotLabel(type) {
             </label>
           </div>
           <div class="card-desc" style="margin-bottom:16px">Master Admin is the only built-in founder access. Admin access is assigned separately below from registered users.</div>
-          <button class="btn btn-danger" onclick="saveSecuritySettings()">🔒 Update Master Password</button>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-secondary" data-legacy-click="saveRegistrationSettings()">🪪 Save Registration Policy</button>
+            <button class="btn btn-danger" data-legacy-click="saveSecuritySettings()">🔒 Update Master Password</button>
+          </div>
         </div>
 
         <div class="card admin-only" id="ssoSetupCard" style="display:none">
@@ -3638,7 +3773,7 @@ function getMascotLabel(type) {
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label">Provider</label>
-              <select class="form-select" id="setupSsoProvider" onchange="handleSsoProviderChange()">
+              <select class="form-select" id="setupSsoProvider" data-legacy-change="handleSsoProviderChange()">
                 <option value="google">Google Workspace</option>
                 <option value="microsoft">Microsoft Entra ID</option>
               </select>
@@ -3683,9 +3818,9 @@ function getMascotLabel(type) {
             </div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="saveSsoSettings()">💾 Save SSO Settings</button>
-            <button class="btn btn-secondary" onclick="testSsoSettings()">🔍 Test SSO Start</button>
-            <button class="btn btn-ghost" onclick="loadSsoSettings(true)">↻ Refresh SSO Status</button>
+            <button class="btn btn-primary" data-legacy-click="saveSsoSettings()">💾 Save SSO Settings</button>
+            <button class="btn btn-secondary" data-legacy-click="testSsoSettings()">🔍 Test SSO Start</button>
+            <button class="btn btn-ghost" data-legacy-click="loadSsoSettings(true)">↻ Refresh SSO Status</button>
           </div>
           <div id="setupSsoStatus" class="card-desc" style="margin-top:12px"></div>
         </div>
@@ -3699,9 +3834,58 @@ function getMascotLabel(type) {
           <div class="card-desc" style="margin-bottom:14px">Only Master Admin can assign admin access. Registered employees remain Users unless promoted here.</div>
           <div id="masterAccessList" style="display:grid;gap:10px"></div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
-            <button class="btn btn-secondary" onclick="saveAdminSeatLimit()">💾 Save Admin Limit</button>
-            <button class="btn btn-ghost" onclick="renderAccessControl()">↻ Refresh List</button>
+            <button class="btn btn-secondary" data-legacy-click="saveAdminSeatLimit()">💾 Save Admin Limit</button>
+            <button class="btn btn-ghost" data-legacy-click="renderAccessControl()">↻ Refresh List</button>
           </div>
+        </div>
+
+        <div class="card master-only" id="masterTenantCard" style="display:none">
+          <div class="card-title" style="margin-bottom:14px">🏢 Client Workspace Setup</div>
+          <div class="card-desc" style="margin-bottom:14px">Create a new client company code with a seeded admin account for demos and rollouts.</div>
+          <div class="form-grid cols-2">
+            <div class="form-group">
+              <label class="form-label">Client Code</label>
+              <input class="form-input" id="masterTenantCode" placeholder="e.g. DEMOAPR1" maxlength="32">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Client Name</label>
+              <input class="form-input" id="masterTenantName" placeholder="Demo Client Workspace" maxlength="120">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Primary Domain</label>
+              <input class="form-input" id="masterTenantDomain" placeholder="demo-client.local" maxlength="120">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Plan</label>
+              <select class="form-select" id="masterTenantPlan">
+                <option value="enterprise" selected>Enterprise</option>
+                <option value="growth">Growth</option>
+                <option value="starter">Starter</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Seeded Admin Name</label>
+              <input class="form-input" id="masterTenantAdminName" placeholder="Demo Admin" maxlength="80">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Seeded Admin Employee ID</label>
+              <input class="form-input" id="masterTenantAdminEmpId" placeholder="DEMO-ADMIN" maxlength="40">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Seeded Admin Email</label>
+              <input class="form-input" id="masterTenantAdminEmail" placeholder="demo.admin@client.local" maxlength="120">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Seeded Admin Password</label>
+              <input class="form-input" id="masterTenantAdminPassword" type="password" placeholder="Minimum 8 characters">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+            <button class="btn btn-primary" id="masterTenantCreateBtn" data-legacy-click="createMasterTenant()">Create Demo Client →</button>
+            <button class="btn btn-ghost" data-legacy-click="loadMasterTenants(true)">↻ Refresh Client List</button>
+          </div>
+          <div class="card-desc" id="masterTenantStatus" style="margin-top:12px"></div>
+          <div id="masterTenantList" style="display:grid;gap:10px;margin-top:14px"></div>
         </div>
 
         <div class="card">
@@ -3710,8 +3894,8 @@ function getMascotLabel(type) {
             <label class="form-label">Google Sheets / Shared Tracker URL</label>
             <input class="form-input" id="setupSheetUrl" placeholder="https://docs.google.com/spreadsheets/...">
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-              <button class="btn btn-ghost btn-sm" id="sheetSyncLinkBtn" onclick="generateSheetSyncLink()">🔗 Generate Sync Link</button>
-              <button class="btn btn-secondary btn-sm" id="sheetSyncNowBtn" onclick="syncGoogleSheetNow()">⟳ Sync Sheet Now</button>
+              <button class="btn btn-ghost btn-sm" id="sheetSyncLinkBtn" data-legacy-click="generateSheetSyncLink()">🔗 Generate Sync Link</button>
+              <button class="btn btn-secondary btn-sm" id="sheetSyncNowBtn" data-legacy-click="syncGoogleSheetNow()">⟳ Sync Sheet Now</button>
               <div class="card-desc" id="sheetSyncLink" style="margin:0;word-break:break-all"></div>
             </div>
             <div class="card-desc" id="sheetSyncPreview" style="margin-top:8px"></div>
@@ -3734,15 +3918,15 @@ function getMascotLabel(type) {
           </div>
           <div class="form-group" style="margin-bottom:12px">
             <label class="form-label">Important Documents</label>
-            <div class="upload-zone" onclick="document.getElementById('setupDocsInput').click()">
+            <div class="upload-zone" data-legacy-click="document.getElementById('setupDocsInput').click()">
               <span class="uz-icon">📎</span>
               <div class="uz-text">Upload policies, SOPs, misconduct guides, or reference files</div>
               <div class="uz-sub">Names are stored locally so the setup remains trackable on this machine</div>
             </div>
-            <input type="file" id="setupDocsInput" data-target="settings" multiple style="display:none" onchange="handleKnowledgeDocs(this)">
+            <input type="file" id="setupDocsInput" data-target="settings" multiple style="display:none" data-legacy-change="handleKnowledgeDocs(this)">
             <div class="setup-doc-list" id="setupDocsList"></div>
           </div>
-          <button class="btn btn-secondary" id="saveKnowledgeSettingsBtn" onclick="saveKnowledgeSettings()">💾 Save Knowledge Sources</button>
+          <button class="btn btn-secondary" id="saveKnowledgeSettingsBtn" data-legacy-click="saveKnowledgeSettings()">💾 Save Knowledge Sources</button>
         </div>
       </div>
 
@@ -3750,11 +3934,11 @@ function getMascotLabel(type) {
       <div class="card" style="margin-top:4px">
         <div class="card-title" style="margin-bottom:10px">🗃️ Data Management</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-secondary" onclick="exportAllData()">📥 Export All Data</button>
-          <button class="btn btn-secondary" onclick="importData()">📤 Import Data</button>
-          <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Tickets</button>
+          <button class="btn btn-secondary" data-legacy-click="exportAllData()">📥 Export All Data</button>
+          <button class="btn btn-secondary" data-legacy-click="importData()">📤 Import Data</button>
+          <button class="btn btn-danger" data-legacy-click="clearAllData()">🗑️ Clear All Tickets</button>
         </div>
-        <input type="file" id="importDataInput" accept="application/json,.json" style="display:none" onchange="handleImportData(this)">
+        <input type="file" id="importDataInput" accept="application/json,.json" style="display:none" data-legacy-change="handleImportData(this)">
       </div>
     </div>
     </div>
@@ -3768,35 +3952,79 @@ function getMascotLabel(type) {
         <div class="page-title">👤 My <em>Profile</em></div>
         <div class="page-desc">View and update your personal details.</div>
       </div>
-      <div class="card" style="max-width:480px">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
-          <div class="sb-avi" style="width:64px;height:64px;font-size:24px" id="profileAvi">A</div>
-          <div>
-            <div style="font-size:18px;font-weight:800;font-family:var(--font-head);color:var(--white)" id="profileName">Name</div>
-            <div style="font-size:13px;color:var(--text);font-family:var(--font-ui)" id="profileRole">Role</div>
-            <div style="font-size:12px;color:var(--sub);font-family:var(--font-ui);margin-top:2px" id="profileEmp">EMP-0000</div>
+      <div class="form-grid" style="grid-template-columns:minmax(320px,480px) minmax(320px,480px);align-items:start">
+        <div class="card" style="max-width:480px">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+            <div class="sb-avi" style="width:64px;height:64px;font-size:24px" id="profileAvi">A</div>
+            <div>
+              <div style="font-size:18px;font-weight:800;font-family:var(--font-head);color:var(--white)" id="profileName">Name</div>
+              <div style="font-size:13px;color:var(--text);font-family:var(--font-ui)" id="profileRole">Role</div>
+              <div style="font-size:12px;color:var(--sub);font-family:var(--font-ui);margin-top:2px" id="profileEmp">EMP-0000</div>
+            </div>
           </div>
+          <div class="form-grid" style="grid-template-columns:1fr">
+            <div class="form-group">
+              <label class="form-label">Display Name</label>
+              <input class="form-input" id="profNameInp" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" id="profEmailInp" type="email" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <input class="form-input" id="profDeptInp" placeholder="Department">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Property / Location</label>
+              <input class="form-input" id="profLocInp" placeholder="Your property">
+            </div>
+          </div>
+          <button class="btn btn-primary" data-legacy-click="saveProfile()">💾 Save Profile</button>
+          <button class="btn btn-danger" style="margin-left:10px" data-legacy-click="doLogout()">🚪 Sign Out</button>
         </div>
-        <div class="form-grid" style="grid-template-columns:1fr">
-          <div class="form-group">
-            <label class="form-label">Display Name</label>
-            <input class="form-input" id="profNameInp" placeholder="Your name">
+        <div class="card" style="max-width:480px">
+          <div class="card-title" style="margin-bottom:14px">🦉 Personalize Bloomie</div>
+          <div class="card-desc" style="margin-bottom:14px">Choose how Bloomie looks and speaks for your own workspace.</div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Mascot Character</label>
+            <div class="mascot-opts" id="profileMascotOpts"></div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input" id="profEmailInp" type="email" placeholder="your@email.com">
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Preferred Language</label>
+            <select class="form-select" id="profileLanguage">
+              <option value="en-IN">English</option>
+              <option value="hi-IN">Hindi</option>
+              <option value="en-IN-hinglish">Hinglish</option>
+              <option value="pa-IN">Punjabi</option>
+              <option value="bn-IN">Bengali</option>
+              <option value="mr-IN">Marathi</option>
+              <option value="ta-IN">Tamil</option>
+              <option value="te-IN">Telugu</option>
+              <option value="ml-IN">Malayalam</option>
+              <option value="kn-IN">Kannada</option>
+            </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Department</label>
-            <input class="form-input" id="profDeptInp" placeholder="Department">
+          <div class="form-group" style="margin-bottom:14px">
+            <label class="form-check">
+              <input type="checkbox" id="profileAutoGreet" checked>
+              <span>Show greeting on login</span>
+            </label>
           </div>
-          <div class="form-group">
-            <label class="form-label">Property / Location</label>
-            <input class="form-input" id="profLocInp" placeholder="Your property">
+          <div class="form-group" style="margin-bottom:10px">
+            <label class="form-check">
+              <input type="checkbox" id="profileShowMascot" checked>
+              <span>Show mascot on dashboard</span>
+            </label>
           </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label class="form-check">
+              <input type="checkbox" id="profileMascotMotion" checked>
+              <span>Enable mascot animation</span>
+            </label>
+          </div>
+          <button class="btn btn-primary" data-legacy-click="savePersonalPreferences()">💾 Save Bloomie Preferences</button>
         </div>
-        <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
-        <button class="btn btn-danger" style="margin-left:10px" onclick="doLogout()">🚪 Sign Out</button>
       </div>
     </div>
     </div>
@@ -3815,10 +4043,10 @@ function getMascotLabel(type) {
 <div class="dev-panel" id="devPanel">
   <div class="dev-panel-head">
     <div class="dev-panel-title">🎨 Mascot Settings</div>
-    <button class="modal-close" onclick="toggleDevPanel()">×</button>
+    <button class="modal-close" data-legacy-click="toggleDevPanel()">×</button>
   </div>
   <div class="mascot-opts" id="devMascotOpts"></div>
-  <button class="btn btn-primary btn-sm" style="width:100%" onclick="applyMascot()">Apply</button>
+  <button class="btn btn-primary btn-sm" style="width:100%" data-legacy-click="applyMascot()">Apply</button>
 </div>
 
 <!-- TICKET DETAIL MODAL -->
@@ -3826,18 +4054,18 @@ function getMascotLabel(type) {
   <div class="modal" style="max-width:640px">
     <div class="modal-head">
       <div class="modal-title" id="tktModalTitle">Ticket Details</div>
-      <button class="modal-close" onclick="closeTicketModal()">×</button>
+      <button class="modal-close" data-legacy-click="closeTicketModal()">×</button>
     </div>
     <div id="tktModalBody"></div>
   </div>
 </div>
 
 <!-- TICKET SUCCESS MODAL -->
-<div class="modal-overlay" id="ticketSuccessModal" onclick="if(event.target===this)closeTicketSuccessModal()">
+<div class="modal-overlay" id="ticketSuccessModal" data-legacy-click="if(event.target===this)closeTicketSuccessModal()">
   <div class="modal" style="max-width:520px">
     <div class="modal-head">
       <div class="modal-title">✅ Ticket Submitted</div>
-      <button class="modal-close" onclick="closeTicketSuccessModal()">×</button>
+      <button class="modal-close" data-legacy-click="closeTicketSuccessModal()">×</button>
     </div>
     <div style="text-align:center">
       <div style="font-size:44px;line-height:1;margin-bottom:10px">🎫</div>
@@ -3845,8 +4073,8 @@ function getMascotLabel(type) {
       <div id="ticketSuccessId" style="font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--y);letter-spacing:.03em;margin-bottom:14px">BHG-HD-0000</div>
       <div id="ticketSuccessMeta" style="font-size:12.5px;color:var(--sub);font-family:var(--font-ui);line-height:1.7;margin-bottom:18px"></div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="copyTicketSuccessId()">📋 Copy Ticket ID</button>
-        <button class="btn btn-secondary" onclick="closeTicketSuccessModal();showPage('track',document.getElementById('snav-track'))">🔍 Track Ticket</button>
+        <button class="btn btn-primary" data-legacy-click="copyTicketSuccessId()">📋 Copy Ticket ID</button>
+        <button class="btn btn-secondary" data-legacy-click="closeTicketSuccessModal();showPage('track',document.getElementById('snav-track'))">🔍 Track Ticket</button>
       </div>
     </div>
   </div>
@@ -3860,7 +4088,7 @@ function getMascotLabel(type) {
         <div class="modal-title">🛠️ Setup Mode</div>
         <div class="card-desc" style="margin-top:4px">Connect Bloomie to your organisation before daily use begins.</div>
       </div>
-      <button class="modal-close" onclick="closeSetupMode()">×</button>
+      <button class="modal-close" data-legacy-click="closeSetupMode()">×</button>
     </div>
     <div class="setup-wizard-grid">
       <div class="setup-wizard-section">
@@ -3888,12 +4116,12 @@ function getMascotLabel(type) {
         </div>
         <div class="form-group">
           <label class="form-label">Important Documents</label>
-          <div class="upload-zone" onclick="document.getElementById('wizardDocsInput').click()">
+          <div class="upload-zone" data-legacy-click="document.getElementById('wizardDocsInput').click()">
             <span class="uz-icon">📎</span>
             <div class="uz-text">Upload policies, SOPs, misconduct notes, and important references</div>
             <div class="uz-sub">This quick-fix model stores the selected file names locally for setup tracking.</div>
           </div>
-          <input type="file" id="wizardDocsInput" data-target="wizard" multiple style="display:none" onchange="handleKnowledgeDocs(this)">
+          <input type="file" id="wizardDocsInput" data-target="wizard" multiple style="display:none" data-legacy-change="handleKnowledgeDocs(this)">
           <div class="setup-doc-list" id="wizardDocsList"></div>
         </div>
       </div>
@@ -3943,9 +4171,9 @@ function getMascotLabel(type) {
           <div class="mascot-opts" id="wizardMascotOpts"></div>
         </div>
         <div class="setup-inline-actions">
-          <button class="btn btn-primary" onclick="completeInitialSetup()">✅ Save Setup & Continue</button>
-          <button class="btn btn-ghost" onclick="skipSetupMode()">⏭️ Skip For Now</button>
-          <button class="btn btn-secondary" onclick="openAccountPage('setup');closeSetupMode(true)">⚙️ Open Full Settings</button>
+          <button class="btn btn-primary" data-legacy-click="completeInitialSetup()">✅ Save Setup & Continue</button>
+          <button class="btn btn-ghost" data-legacy-click="skipSetupMode()">⏭️ Skip For Now</button>
+          <button class="btn btn-secondary" data-legacy-click="openAccountPage('setup');closeSetupMode(true)">⚙️ Open Full Settings</button>
         </div>
         <div class="card-desc" style="margin-top:14px">We’ll save these values locally in the browser so the model starts in a configured state next time.</div>
       </div>
@@ -3954,11 +4182,11 @@ function getMascotLabel(type) {
 </div>
 
 <!-- NOTIFICATIONS PANEL -->
-<div class="modal-overlay" id="notifPanel" onclick="if(event.target===this)toggleNotifications()">
+<div class="modal-overlay" id="notifPanel" data-legacy-click="if(event.target===this)toggleNotifications()">
   <div class="modal" style="max-width:380px;position:fixed;top:72px;right:16px;margin:0">
     <div class="modal-head">
       <div class="modal-title">🔔 Notifications</div>
-      <button class="modal-close" onclick="toggleNotifications()">×</button>
+      <button class="modal-close" data-legacy-click="toggleNotifications()">×</button>
     </div>
     <div id="notifList">
       <div style="text-align:center;padding:24px;color:var(--sub);font-family:var(--font-ui);font-size:13px">
@@ -4025,40 +4253,53 @@ function writeScopedSessionJson(baseKey, value, tenantCode) {
 function removeScopedSessionKey(baseKey, tenantCode) {
   sessionStorage.removeItem(getScopedStorageKey(baseKey, tenantCode));
 }
+function normalizeMascotType(value) {
+  if(value === 'robot' || !value || !MASCOTS[value]) return 'owl';
+  return value;
+}
 function getConfig() {
-  return readScopedJson('bloomie_hd_cfg', {}, getStorageTenantCode());
+  const tenantCode = getStorageTenantCode();
+  const cfg = readScopedJson('bloomie_hd_cfg', {}, tenantCode);
+  const normalizedMascot = normalizeMascotType(cfg.mascot);
+  if(cfg.mascot !== normalizedMascot) {
+    cfg.mascot = normalizedMascot;
+    writeScopedJson('bloomie_hd_cfg', cfg, tenantCode);
+  }
+  return cfg;
 }
 function saveConfig(patch) {
   const cfg = getConfig();
   Object.assign(cfg, patch);
+  cfg.mascot = normalizeMascotType(cfg.mascot);
   writeScopedJson('bloomie_hd_cfg', cfg, getStorageTenantCode());
   syncConfigToBackend(patch);
   return cfg;
 }
 
 const API_STATE = {
-  token: sessionStorage.getItem('bloomie_hd_token') || '',
-  tenantCode: localStorage.getItem('bloomie_hd_tenant_code') || 'DEFAULT',
+  token: '',
+  sessionActive: false,
+  tenantCode: localStorage.getItem('bloomie_hd_tenant_code') || '',
   backendReachable: null
 };
 const API_BASE = window.location.protocol === 'file:' ? 'http://127.0.0.1:4181' : '';
 
 function hasBackendSession() {
-  return !!API_STATE.token;
+  return !!(API_STATE.sessionActive || API_STATE.token);
 }
 
 function getSelectedTenantCode() {
   const loginValue = (document.getElementById('loginTenantCode') || {}).value || '';
   const regValue = (document.getElementById('regTenantCode') || {}).value || '';
-  return (loginValue || regValue || API_STATE.tenantCode || 'DEFAULT').trim().toUpperCase();
+  return (loginValue || regValue || API_STATE.tenantCode || '').trim().toUpperCase();
 }
 
 function setBackendSession(token, tenantCode) {
   API_STATE.token = token || '';
-  API_STATE.tenantCode = tenantCode || API_STATE.tenantCode || 'DEFAULT';
-  if(API_STATE.token) sessionStorage.setItem('bloomie_hd_token', API_STATE.token);
-  else sessionStorage.removeItem('bloomie_hd_token');
-  localStorage.setItem('bloomie_hd_tenant_code', API_STATE.tenantCode);
+  API_STATE.sessionActive = !!(API_STATE.sessionActive || API_STATE.token);
+  API_STATE.tenantCode = tenantCode || API_STATE.tenantCode || '';
+  if(API_STATE.tenantCode) localStorage.setItem('bloomie_hd_tenant_code', API_STATE.tenantCode);
+  else localStorage.removeItem('bloomie_hd_tenant_code');
   const loginTenant = document.getElementById('loginTenantCode');
   const regTenant = document.getElementById('regTenantCode');
   if(loginTenant) loginTenant.value = API_STATE.tenantCode;
@@ -4072,11 +4313,17 @@ async function apiRequest(path, options) {
   const response = await fetch(API_BASE + path, {
     method: opts.method || 'GET',
     headers,
-    body: opts.body ? JSON.stringify(opts.body) : undefined
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+    credentials: 'include'
   });
   let payload = {};
   try { payload = await response.json(); } catch(e) {}
   if(!response.ok) {
+    if(response.status === 401) {
+      API_STATE.sessionActive = false;
+      API_STATE.token = '';
+      saveSessionUser(null);
+    }
     const err = new Error(payload.error || 'Request failed');
     err.status = response.status;
     err.payload = payload;
@@ -4089,17 +4336,51 @@ async function apiRequest(path, options) {
 async function fetchJsonOrText(path, options) {
   const opts = options || {};
   const headers = Object.assign(opts.headers || {}, opts.body ? { 'Content-Type':'application/json' } : {});
+  if(API_STATE.token) headers.Authorization = 'Bearer ' + API_STATE.token;
   const response = await fetch(API_BASE + path, {
     method: opts.method || 'GET',
     headers,
     body: opts.body ? JSON.stringify(opts.body) : undefined,
-    redirect: opts.redirect || 'follow'
+    redirect: opts.redirect || 'follow',
+    credentials: 'include'
   });
   const contentType = response.headers.get('content-type') || '';
   let body;
   if(contentType.includes('application/json')) body = await response.json();
   else body = await response.text();
   return { response, body };
+}
+async function apiRequestRaw(path, options) {
+  const opts = options || {};
+  const headers = Object.assign({}, opts.headers || {});
+  if(API_STATE.token) headers.Authorization = 'Bearer ' + API_STATE.token;
+  const response = await fetch(API_BASE + path, {
+    method: opts.method || 'GET',
+    headers,
+    body: opts.body,
+    redirect: opts.redirect || 'follow',
+    credentials: 'include'
+  });
+  const contentType = response.headers.get('content-type') || '';
+  let body = {};
+  if(contentType.includes('application/json')) {
+    try { body = await response.json(); } catch(e) {}
+  } else {
+    body = await response.text();
+  }
+  if(!response.ok) {
+    if(response.status === 401) {
+      API_STATE.sessionActive = false;
+      API_STATE.token = '';
+      saveSessionUser(null);
+    }
+    const err = new Error(body && typeof body === 'object' ? (body.error || body.detail || 'Request failed') : 'Request failed');
+    err.status = response.status;
+    err.payload = body;
+    throw err;
+  }
+  API_STATE.backendReachable = true;
+  return body;
 }
 
 async function ensureBackendReachable() {
@@ -4181,10 +4462,10 @@ function ensureForumSeedData() {
   ]);
   saveForumReplies([
     { id:'frmr-2001', postId:'frm-1001', author:'Payroll Desk', role:'HR Admin', body:'Upload a cancelled cheque or passbook image and your employee ID. If it is before the 25th payroll lock, HR can usually update it for the current cycle.', createdAt:new Date(now - 1000*60*60*10).toISOString() },
-    { id:'frmr-2002', postId:'frm-1001', author:'Bloomie AI', role:'AI Guide', body:'Best path: ask about the process in the forum, but raise a ticket for the actual account change so your banking data stays private and HR can verify documents securely.', createdAt:new Date(now - 1000*60*60*3).toISOString() },
+    { id:'frmr-2002', postId:'frm-1001', author:'Bloomie Guide', role:'Guided Assistant', body:'Best path: ask about the process in the forum, but raise a ticket for the actual account change so your banking data stays private and HR can verify documents securely.', createdAt:new Date(now - 1000*60*60*3).toISOString() },
     { id:'frmr-2003', postId:'frm-1002', author:'Regional HR', role:'HR Admin', body:'Comp-off and overtime should not both apply for the same shift unless a local policy exception exists. We usually require shift approval plus the duty roster.', createdAt:new Date(now - 1000*60*60*2).toISOString() },
     { id:'frmr-2004', postId:'frm-1003', author:'IT Helpdesk', role:'IT Admin', body:'Use the forum if you are clarifying the process. Use a tracked ticket if your account is actually blocked or missing because we need employee-specific details and provisioning logs.', createdAt:new Date(now - 1000*60*60*12).toISOString() },
-    { id:'frmr-2005', postId:'frm-1003', author:'Bloomie AI', role:'AI Guide', body:'Public question for policy or workflow, private ticket for credentials, payroll, personal records, compliance, or any issue that needs case ownership. Missing access after joining should become a ticket once the process is clear.', createdAt:new Date(now - 1000*60*60*7).toISOString() }
+    { id:'frmr-2005', postId:'frm-1003', author:'Bloomie Guide', role:'Guided Assistant', body:'Public question for policy or workflow, private ticket for credentials, payroll, personal records, compliance, or any issue that needs case ownership. Missing access after joining should become a ticket once the process is clear.', createdAt:new Date(now - 1000*60*60*7).toISOString() }
   ]);
 }
 
@@ -4264,6 +4545,7 @@ function saveManagerActionsStore(arr) {
 let currentUser = null;
 let sidebarOpen = true;
 let chatHistory = [];
+let chatImageDraft = null;
 let recognizing = false;
 const forumState = { category:'all', query:'', selectedId:'' };
 let setupDocsDraft = [];
@@ -4271,6 +4553,8 @@ let wizardDocsDraft = [];
 let currentPage = '';
 let kbStaticMarkup = null;
 let ssoSettingsState = { providers: [], security: {} };
+let imageEditStatusState = null;
+let liveAgentStatusState = null;
 
 function getPageStorageKey(user = currentUser) {
   const scope = user && (user.empId || user.email || user.name) ? cleanId(user.empId || user.email || user.name, 'USER') : 'ANON';
@@ -4283,6 +4567,16 @@ function saveCurrentPage(name) {
 }
 function getSavedPage(user = currentUser) {
   try { return localStorage.getItem(getPageStorageKey(user)) || ''; } catch(e) { return ''; }
+}
+function getRequestedAppPage(user = currentUser) {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const requested = (params.get('appRoute') || '').trim().toLowerCase();
+    if(!requested) return '';
+    return canAccessPage(requested, user) ? requested : '';
+  } catch (err) {
+    return '';
+  }
 }
 function clearSavedPage(user = currentUser) {
   try { localStorage.removeItem(getPageStorageKey(user)); } catch(e) {}
@@ -4302,6 +4596,161 @@ function setHtmlSafe(id, value) {
   const el = document.getElementById(id);
   if (el) el.innerHTML = value;
 }
+const LEGACY_INLINE_EVENT_MAP = {
+  click: 'onclick',
+  change: 'onchange',
+  input: 'oninput',
+  keydown: 'onkeydown'
+};
+function splitLegacyParts(text, separator) {
+  const out = [];
+  let current = '';
+  let quote = '';
+  let depth = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i];
+    const prev = i > 0 ? text[i - 1] : '';
+    if (quote) {
+      current += ch;
+      if (ch === quote && prev !== '\\') quote = '';
+      continue;
+    }
+    if (ch === '"' || ch === "'") {
+      quote = ch;
+      current += ch;
+      continue;
+    }
+    if (ch === '(') depth += 1;
+    if (ch === ')') depth = Math.max(0, depth - 1);
+    if (ch === separator && depth === 0) {
+      if (current.trim()) out.push(current.trim());
+      current = '';
+      continue;
+    }
+    current += ch;
+  }
+  if (current.trim()) out.push(current.trim());
+  return out;
+}
+function decodeLegacyStringLiteral(token) {
+  if (!token || token.length < 2) return token;
+  const quote = token[0];
+  const inner = token.slice(1, -1);
+  return inner
+    .replace(/\\\\/g, '\\')
+    .replace(new RegExp(`\\\\${quote}`, 'g'), quote)
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\r')
+    .replace(/\\t/g, '\t');
+}
+function resolveLegacyArgument(token, el, event) {
+  const value = token.trim();
+  if (!value) return undefined;
+  if (value === 'this') return el;
+  if (value === 'event') return event;
+  if (value === 'this.value') return el && 'value' in el ? el.value : undefined;
+  if (value === 'this.textContent') return el ? el.textContent : '';
+  if (/^['"]/.test(value) && value.endsWith(value[0])) return decodeLegacyStringLiteral(value);
+  const idMatch = value.match(/^document\.getElementById\((['"])(.*?)\1\)$/);
+  if (idMatch) return document.getElementById(idMatch[2]);
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  if (value === 'null') return null;
+  if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
+  return value;
+}
+function runLegacyCall(expression, el, event) {
+  if (!expression) return;
+  if (expression === 'event.stopPropagation()') {
+    event.stopPropagation();
+    return;
+  }
+  const domAction = expression.match(/^document\.getElementById\((['"])(.*?)\1\)\.(focus|click)\(\)$/);
+  if (domAction) {
+    const target = document.getElementById(domAction[2]);
+    if (target && typeof target[domAction[3]] === 'function') target[domAction[3]]();
+    return;
+  }
+  const ifMatch = expression.match(/^if\s*\((.+)\)\s*(.+)$/);
+  if (ifMatch) {
+    const condition = ifMatch[1].trim();
+    const inner = ifMatch[2].trim();
+    const passes = condition === "event.key==='Enter'" || condition === 'event.key==="Enter"'
+      ? event.key === 'Enter'
+      : condition === 'event.target===this'
+        ? event.target === el
+        : false;
+    if (passes) runLegacyExpression(inner, el, event);
+    return;
+  }
+  const callMatch = expression.match(/^([A-Za-z_$][\w$]*)\((.*)\)$/);
+  if (!callMatch) return;
+  const fn = window[callMatch[1]];
+  if (typeof fn !== 'function') return;
+  const args = splitLegacyParts(callMatch[2], ',').map(part => resolveLegacyArgument(part, el, event));
+  fn(...args);
+}
+function runLegacyExpression(expression, el, event) {
+  splitLegacyParts(String(expression || ''), ';').forEach(part => runLegacyCall(part, el, event));
+}
+function migrateLegacyInlineHandlers(root) {
+  if (!root) return;
+  const nodes = [];
+  if (root.nodeType === 1) nodes.push(root);
+  if (typeof root.querySelectorAll === 'function') nodes.push(...root.querySelectorAll('[onclick],[onchange],[oninput],[onkeydown]'));
+  nodes.forEach(node => {
+    Object.entries(LEGACY_INLINE_EVENT_MAP).forEach(([eventName, attrName]) => {
+      const handler = node.getAttribute && node.getAttribute(attrName);
+      if (!handler) return;
+      node.setAttribute(`data-legacy-${eventName}`, handler);
+      node.removeAttribute(attrName);
+    });
+  });
+}
+function findLegacyEventNode(start, eventName) {
+  const attrName = `data-legacy-${eventName}`;
+  let node = start;
+  while (node && node !== document) {
+    if (node.nodeType === 1 && node.hasAttribute(attrName)) return node;
+    node = node.parentElement;
+  }
+  return null;
+}
+function dispatchLegacyEvent(eventName, event) {
+  if (!event || !event.target) return;
+  if (eventName === 'click') {
+    let node = event.target;
+    while (node && node !== document) {
+      if (node.nodeType === 1 && node.hasAttribute('data-legacy-click')) {
+        runLegacyExpression(node.getAttribute('data-legacy-click'), node, event);
+        if (event.cancelBubble) return;
+      }
+      node = node.parentElement;
+    }
+    return;
+  }
+  const node = findLegacyEventNode(event.target, eventName);
+  if (!node) return;
+  runLegacyExpression(node.getAttribute(`data-legacy-${eventName}`), node, event);
+}
+function initLegacyInlineEventBridge() {
+  if (window.__bloomieLegacyBridgeReady) return;
+  window.__bloomieLegacyBridgeReady = true;
+  migrateLegacyInlineHandlers(document);
+  document.addEventListener('click', event => dispatchLegacyEvent('click', event), true);
+  document.addEventListener('change', event => dispatchLegacyEvent('change', event), true);
+  document.addEventListener('input', event => dispatchLegacyEvent('input', event), true);
+  document.addEventListener('keydown', event => dispatchLegacyEvent('keydown', event), true);
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => migrateLegacyInlineHandlers(node));
+    });
+  });
+  if (document.documentElement) {
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  }
+}
+initLegacyInlineEventBridge();
 function isAdminUser(user) {
   return !!(user && (user.role === 'admin' || user.role === 'master'));
 }
@@ -4569,9 +5018,9 @@ function getAdminCardUi() {
 const I18N_STRINGS = {
   'en-IN': {
     auth_welcome_back: 'Welcome back',
-    auth_signin_sub: 'Sign in to your Bloomie Helpdesk',
+    auth_signin_sub: 'Sign in to Bloomie',
     auth_create_account: 'Create account',
-    auth_join_sub: 'Join Bloomie Helpdesk',
+    auth_join_sub: 'Join Bloomie',
     company_code: 'Company Code',
     employee_or_email: 'Employee ID or Email',
     password: 'Password',
@@ -4583,8 +5032,8 @@ const I18N_STRINGS = {
     create_account: 'Create Account →',
     continue_google: 'Continue with Google',
     continue_microsoft: 'Continue with Microsoft',
-    register_here: "Don't have an account? <a onclick=\"switchToRegister()\">Register here</a>",
-    already_have_account: 'Already have an account? <a onclick="switchToLogin()">Sign in</a>',
+    register_here: "Don't have an account? <a data-legacy-click=\"switchToRegister()\">Register here</a>",
+    already_have_account: 'Already have an account? <a data-legacy-click="switchToLogin()">Sign in</a>',
     placeholder_login_tenant: 'e.g. DEFAULT or CLIENTA',
     placeholder_login_user: 'e.g. EMP-001 or name@company.com',
     placeholder_login_pass: 'Enter your password',
@@ -4629,8 +5078,8 @@ const I18N_STRINGS = {
     page_kb_title: '📚 Knowledge <em>Base</em>',
     page_kb_desc: 'Find answers to common HR questions, policies, and procedures.',
     page_forum_title: '💬 Community <em>Forum</em>',
-    page_forum_desc: 'Peer-to-peer help, reusable resolutions, and Bloomie AI assisted guidance before issues become tickets.',
-    page_chat_title: 'Bloomie Assistant',
+    page_forum_desc: 'Peer-to-peer help, reusable resolutions, and Bloomie-guided support before issues become tickets.',
+    page_chat_title: 'Bloomie Guided Assistant',
     page_chat_sub: 'Your smart local helpdesk assistant tuned for HR policies, leave, payroll, and operational support',
     page_all_title: '🎯 All <em>Tickets</em>',
     page_all_desc: 'Manage and resolve all HR helpdesk requests across the organisation.',
@@ -4651,9 +5100,9 @@ const I18N_STRINGS = {
   },
   'hi-IN': {
     auth_welcome_back: 'वापसी पर स्वागत है',
-    auth_signin_sub: 'अपने Bloomie Helpdesk में साइन इन करें',
+    auth_signin_sub: 'Bloomie में साइन इन करें',
     auth_create_account: 'खाता बनाएं',
-    auth_join_sub: 'Bloomie Helpdesk से जुड़ें',
+    auth_join_sub: 'Bloomie से जुड़ें',
     company_code: 'कंपनी कोड',
     employee_or_email: 'कर्मचारी आईडी या ईमेल',
     password: 'पासवर्ड',
@@ -4665,8 +5114,8 @@ const I18N_STRINGS = {
     create_account: 'खाता बनाएं →',
     continue_google: 'Google से जारी रखें',
     continue_microsoft: 'Microsoft से जारी रखें',
-    register_here: 'क्या आपका खाता नहीं है? <a onclick="switchToRegister()">यहाँ रजिस्टर करें</a>',
-    already_have_account: 'क्या पहले से खाता है? <a onclick="switchToLogin()">साइन इन करें</a>',
+    register_here: 'क्या आपका खाता नहीं है? <a data-legacy-click="switchToRegister()">यहाँ रजिस्टर करें</a>',
+    already_have_account: 'क्या पहले से खाता है? <a data-legacy-click="switchToLogin()">साइन इन करें</a>',
     placeholder_login_tenant: 'जैसे DEFAULT या CLIENTA',
     placeholder_login_user: 'जैसे EMP-001 या name@company.com',
     placeholder_login_pass: 'अपना पासवर्ड दर्ज करें',
@@ -4733,9 +5182,9 @@ const I18N_STRINGS = {
   },
   'en-IN-hinglish': {
     auth_welcome_back: 'Welcome back',
-    auth_signin_sub: 'Apne Bloomie Helpdesk mein sign in kijiye',
+    auth_signin_sub: 'Bloomie mein sign in kijiye',
     auth_create_account: 'Account banao',
-    auth_join_sub: 'Bloomie Helpdesk join kijiye',
+    auth_join_sub: 'Bloomie join kijiye',
     company_code: 'Company Code',
     employee_or_email: 'Employee ID ya Email',
     password: 'Password',
@@ -4747,8 +5196,8 @@ const I18N_STRINGS = {
     create_account: 'Account Banao →',
     continue_google: 'Google se continue karo',
     continue_microsoft: 'Microsoft se continue karo',
-    register_here: 'Account nahi hai? <a onclick="switchToRegister()">Yahan register karo</a>',
-    already_have_account: 'Already account hai? <a onclick="switchToLogin()">Sign in karo</a>',
+    register_here: 'Account nahi hai? <a data-legacy-click="switchToRegister()">Yahan register karo</a>',
+    already_have_account: 'Already account hai? <a data-legacy-click="switchToLogin()">Sign in karo</a>',
     placeholder_login_tenant: 'jaise DEFAULT ya CLIENTA',
     placeholder_login_user: 'jaise EMP-001 ya name@company.com',
     placeholder_login_pass: 'Apna password daalo',
@@ -4815,9 +5264,9 @@ const I18N_STRINGS = {
   },
   'pa-IN': {
     auth_welcome_back: 'ਵਾਪਸੀ ਤੇ ਸੁਆਗਤ ਹੈ',
-    auth_signin_sub: 'ਆਪਣੇ Bloomie Helpdesk ਵਿੱਚ ਸਾਇਨ ਇਨ ਕਰੋ',
+    auth_signin_sub: 'Bloomie ਵਿੱਚ ਸਾਇਨ ਇਨ ਕਰੋ',
     auth_create_account: 'ਖਾਤਾ ਬਣਾਓ',
-    auth_join_sub: 'Bloomie Helpdesk ਨਾਲ ਜੁੜੋ',
+    auth_join_sub: 'Bloomie ਨਾਲ ਜੁੜੋ',
     company_code: 'ਕੰਪਨੀ ਕੋਡ',
     employee_or_email: 'ਕਰਮਚਾਰੀ ਆਈਡੀ ਜਾਂ ਈਮੇਲ',
     password: 'ਪਾਸਵਰਡ',
@@ -4829,8 +5278,8 @@ const I18N_STRINGS = {
     create_account: 'ਖਾਤਾ ਬਣਾਓ →',
     continue_google: 'Google ਨਾਲ ਜਾਰੀ ਰੱਖੋ',
     continue_microsoft: 'Microsoft ਨਾਲ ਜਾਰੀ ਰੱਖੋ',
-    register_here: 'ਖਾਤਾ ਨਹੀਂ ਹੈ? <a onclick="switchToRegister()">ਇੱਥੇ ਰਜਿਸਟਰ ਕਰੋ</a>',
-    already_have_account: 'ਪਹਿਲਾਂ ਹੀ ਖਾਤਾ ਹੈ? <a onclick="switchToLogin()">ਸਾਇਨ ਇਨ ਕਰੋ</a>',
+    register_here: 'ਖਾਤਾ ਨਹੀਂ ਹੈ? <a data-legacy-click="switchToRegister()">ਇੱਥੇ ਰਜਿਸਟਰ ਕਰੋ</a>',
+    already_have_account: 'ਪਹਿਲਾਂ ਹੀ ਖਾਤਾ ਹੈ? <a data-legacy-click="switchToLogin()">ਸਾਇਨ ਇਨ ਕਰੋ</a>',
     placeholder_login_tenant: 'ਜਿਵੇਂ DEFAULT ਜਾਂ CLIENTA',
     placeholder_login_user: 'ਜਿਵੇਂ EMP-001 ਜਾਂ name@company.com',
     placeholder_login_pass: 'ਆਪਣਾ ਪਾਸਵਰਡ ਦਰਜ ਕਰੋ',
@@ -4897,9 +5346,9 @@ const I18N_STRINGS = {
   },
   'bn-IN': {
     auth_welcome_back: 'আবার স্বাগতম',
-    auth_signin_sub: 'আপনার Bloomie Helpdesk-এ সাইন ইন করুন',
+    auth_signin_sub: 'Bloomie-এ সাইন ইন করুন',
     auth_create_account: 'অ্যাকাউন্ট তৈরি করুন',
-    auth_join_sub: 'Bloomie Helpdesk-এ যোগ দিন',
+    auth_join_sub: 'Bloomie-এ যোগ দিন',
     company_code: 'কোম্পানি কোড',
     employee_or_email: 'কর্মী আইডি বা ইমেল',
     password: 'পাসওয়ার্ড',
@@ -4911,8 +5360,8 @@ const I18N_STRINGS = {
     create_account: 'অ্যাকাউন্ট তৈরি করুন →',
     continue_google: 'Google দিয়ে চালিয়ে যান',
     continue_microsoft: 'Microsoft দিয়ে চালিয়ে যান',
-    register_here: 'অ্যাকাউন্ট নেই? <a onclick="switchToRegister()">এখানে রেজিস্টার করুন</a>',
-    already_have_account: 'আগে থেকেই অ্যাকাউন্ট আছে? <a onclick="switchToLogin()">সাইন ইন করুন</a>',
+    register_here: 'অ্যাকাউন্ট নেই? <a data-legacy-click="switchToRegister()">এখানে রেজিস্টার করুন</a>',
+    already_have_account: 'আগে থেকেই অ্যাকাউন্ট আছে? <a data-legacy-click="switchToLogin()">সাইন ইন করুন</a>',
     placeholder_login_tenant: 'যেমন DEFAULT বা CLIENTA',
     placeholder_login_user: 'যেমন EMP-001 বা name@company.com',
     placeholder_login_pass: 'আপনার পাসওয়ার্ড লিখুন',
@@ -4979,9 +5428,9 @@ const I18N_STRINGS = {
   },
   'mr-IN': {
     auth_welcome_back: 'पुन्हा स्वागत आहे',
-    auth_signin_sub: 'तुमच्या Bloomie Helpdesk मध्ये साइन इन करा',
+    auth_signin_sub: 'Bloomie मध्ये साइन इन करा',
     auth_create_account: 'खाते तयार करा',
-    auth_join_sub: 'Bloomie Helpdesk मध्ये सामील व्हा',
+    auth_join_sub: 'Bloomie मध्ये सामील व्हा',
     company_code: 'कंपनी कोड',
     employee_or_email: 'कर्मचारी आयडी किंवा ईमेल',
     password: 'पासवर्ड',
@@ -4993,8 +5442,8 @@ const I18N_STRINGS = {
     create_account: 'खाते तयार करा →',
     continue_google: 'Google सह सुरू ठेवा',
     continue_microsoft: 'Microsoft सह सुरू ठेवा',
-    register_here: 'खाते नाही? <a onclick="switchToRegister()">इथे नोंदणी करा</a>',
-    already_have_account: 'आधीच खाते आहे? <a onclick="switchToLogin()">साइन इन करा</a>',
+    register_here: 'खाते नाही? <a data-legacy-click="switchToRegister()">इथे नोंदणी करा</a>',
+    already_have_account: 'आधीच खाते आहे? <a data-legacy-click="switchToLogin()">साइन इन करा</a>',
     placeholder_login_tenant: 'उदा. DEFAULT किंवा CLIENTA',
     placeholder_login_user: 'उदा. EMP-001 किंवा name@company.com',
     placeholder_login_pass: 'तुमचा पासवर्ड टाका',
@@ -5061,9 +5510,9 @@ const I18N_STRINGS = {
   },
   'ta-IN': {
     auth_welcome_back: 'மீண்டும் வரவேற்கிறோம்',
-    auth_signin_sub: 'உங்கள் Bloomie Helpdesk-இல் உள்நுழைக',
+    auth_signin_sub: 'Bloomie-இல் உள்நுழைக',
     auth_create_account: 'கணக்கு உருவாக்கவும்',
-    auth_join_sub: 'Bloomie Helpdesk-இல் சேரவும்',
+    auth_join_sub: 'Bloomie-இல் சேரவும்',
     company_code: 'நிறுவன குறியீடு',
     employee_or_email: 'பணியாளர் ஐடி அல்லது மின்னஞ்சல்',
     password: 'கடவுச்சொல்',
@@ -5075,8 +5524,8 @@ const I18N_STRINGS = {
     create_account: 'கணக்கு உருவாக்கு →',
     continue_google: 'Google மூலம் தொடரவும்',
     continue_microsoft: 'Microsoft மூலம் தொடரவும்',
-    register_here: 'கணக்கு இல்லையா? <a onclick="switchToRegister()">இங்கே பதிவு செய்யவும்</a>',
-    already_have_account: 'ஏற்கனவே கணக்கு உள்ளதா? <a onclick="switchToLogin()">உள்நுழையவும்</a>',
+    register_here: 'கணக்கு இல்லையா? <a data-legacy-click="switchToRegister()">இங்கே பதிவு செய்யவும்</a>',
+    already_have_account: 'ஏற்கனவே கணக்கு உள்ளதா? <a data-legacy-click="switchToLogin()">உள்நுழையவும்</a>',
     placeholder_login_tenant: 'எ.கா. DEFAULT அல்லது CLIENTA',
     placeholder_login_user: 'எ.கா. EMP-001 அல்லது name@company.com',
     placeholder_login_pass: 'உங்கள் கடவுச்சொல்லை உள்ளிடவும்',
@@ -5143,9 +5592,9 @@ const I18N_STRINGS = {
   },
   'te-IN': {
     auth_welcome_back: 'మళ్లీ స్వాగతం',
-    auth_signin_sub: 'మీ Bloomie Helpdesk లో సైన్ ఇన్ చేయండి',
+    auth_signin_sub: 'Bloomie లో సైన్ ఇన్ చేయండి',
     auth_create_account: 'ఖాతా సృష్టించండి',
-    auth_join_sub: 'Bloomie Helpdesk లో చేరండి',
+    auth_join_sub: 'Bloomie లో చేరండి',
     company_code: 'కంపెనీ కోడ్',
     employee_or_email: 'ఉద్యోగి ఐడి లేదా ఈమెయిల్',
     password: 'పాస్‌వర్డ్',
@@ -5157,8 +5606,8 @@ const I18N_STRINGS = {
     create_account: 'ఖాతా సృష్టించండి →',
     continue_google: 'Google తో కొనసాగించండి',
     continue_microsoft: 'Microsoft తో కొనసాగించండి',
-    register_here: 'ఖాతా లేదా? <a onclick="switchToRegister()">ఇక్కడ నమోదు చేయండి</a>',
-    already_have_account: 'ఇప్పటికే ఖాతా ఉందా? <a onclick="switchToLogin()">సైన్ ఇన్ చేయండి</a>',
+    register_here: 'ఖాతా లేదా? <a data-legacy-click="switchToRegister()">ఇక్కడ నమోదు చేయండి</a>',
+    already_have_account: 'ఇప్పటికే ఖాతా ఉందా? <a data-legacy-click="switchToLogin()">సైన్ ఇన్ చేయండి</a>',
     placeholder_login_tenant: 'ఉదా. DEFAULT లేదా CLIENTA',
     placeholder_login_user: 'ఉదా. EMP-001 లేదా name@company.com',
     placeholder_login_pass: 'మీ పాస్‌వర్డ్ నమోదు చేయండి',
@@ -5225,9 +5674,9 @@ const I18N_STRINGS = {
   },
   'ml-IN': {
     auth_welcome_back: 'വീണ്ടും സ്വാഗതം',
-    auth_signin_sub: 'നിങ്ങളുടെ Bloomie Helpdesk-ലേക്ക് സൈൻ ഇൻ ചെയ്യൂ',
+    auth_signin_sub: 'Bloomie-ലേക്ക് സൈൻ ഇൻ ചെയ്യൂ',
     auth_create_account: 'അക്കൗണ്ട് സൃഷ്ടിക്കുക',
-    auth_join_sub: 'Bloomie Helpdesk-ലേക്ക് ചേർക്കൂ',
+    auth_join_sub: 'Bloomie-ലേക്ക് ചേർക്കൂ',
     company_code: 'കമ്പനി കോഡ്',
     employee_or_email: 'എംപ്ലോയി ഐഡി അല്ലെങ്കിൽ ഇമെയിൽ',
     password: 'പാസ്‌വേഡ്',
@@ -5239,8 +5688,8 @@ const I18N_STRINGS = {
     create_account: 'അക്കൗണ്ട് സൃഷ്ടിക്കുക →',
     continue_google: 'Google ഉപയോഗിച്ച് തുടരുക',
     continue_microsoft: 'Microsoft ഉപയോഗിച്ച് തുടരുക',
-    register_here: 'അക്കൗണ്ട് ഇല്ലേ? <a onclick="switchToRegister()">ഇവിടെ രജിസ്റ്റർ ചെയ്യൂ</a>',
-    already_have_account: 'ഇതിനകം അക്കൗണ്ട് ഉണ്ടോ? <a onclick="switchToLogin()">സൈൻ ഇൻ ചെയ്യൂ</a>',
+    register_here: 'അക്കൗണ്ട് ഇല്ലേ? <a data-legacy-click="switchToRegister()">ഇവിടെ രജിസ്റ്റർ ചെയ്യൂ</a>',
+    already_have_account: 'ഇതിനകം അക്കൗണ്ട് ഉണ്ടോ? <a data-legacy-click="switchToLogin()">സൈൻ ഇൻ ചെയ്യൂ</a>',
     placeholder_login_tenant: 'ഉദാ. DEFAULT അല്ലെങ്കിൽ CLIENTA',
     placeholder_login_user: 'ഉദാ. EMP-001 അല്ലെങ്കിൽ name@company.com',
     placeholder_login_pass: 'നിങ്ങളുടെ പാസ്‌വേഡ് നൽകുക',
@@ -5307,9 +5756,9 @@ const I18N_STRINGS = {
   },
   'kn-IN': {
     auth_welcome_back: 'ಮತ್ತೆ ಸ್ವಾಗತ',
-    auth_signin_sub: 'ನಿಮ್ಮ Bloomie Helpdesk ಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ',
+    auth_signin_sub: 'Bloomie ಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ',
     auth_create_account: 'ಖಾತೆ ರಚಿಸಿ',
-    auth_join_sub: 'Bloomie Helpdesk ಗೆ ಸೇರಿ',
+    auth_join_sub: 'Bloomie ಗೆ ಸೇರಿ',
     company_code: 'ಕಂಪನಿ ಕೋಡ್',
     employee_or_email: 'ಉದ್ಯೋಗಿ ಐಡಿ ಅಥವಾ ಇಮೇಲ್',
     password: 'ಪಾಸ್ವರ್ಡ್',
@@ -5321,8 +5770,8 @@ const I18N_STRINGS = {
     create_account: 'ಖಾತೆ ರಚಿಸಿ →',
     continue_google: 'Google ಮೂಲಕ ಮುಂದುವರಿಸಿ',
     continue_microsoft: 'Microsoft ಮೂಲಕ ಮುಂದುವರಿಸಿ',
-    register_here: 'ಖಾತೆ ಇಲ್ಲವೇ? <a onclick="switchToRegister()">ಇಲ್ಲಿ ನೋಂದಣಿ ಮಾಡಿ</a>',
-    already_have_account: 'ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ? <a onclick="switchToLogin()">ಸೈನ್ ಇನ್ ಮಾಡಿ</a>',
+    register_here: 'ಖಾತೆ ಇಲ್ಲವೇ? <a data-legacy-click="switchToRegister()">ಇಲ್ಲಿ ನೋಂದಣಿ ಮಾಡಿ</a>',
+    already_have_account: 'ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ? <a data-legacy-click="switchToLogin()">ಸೈನ್ ಇನ್ ಮಾಡಿ</a>',
     placeholder_login_tenant: 'ಉದಾ. DEFAULT ಅಥವಾ CLIENTA',
     placeholder_login_user: 'ಉದಾ. EMP-001 ಅಥವಾ name@company.com',
     placeholder_login_pass: 'ನಿಮ್ಮ ಪಾಸ್ವರ್ಡ್ ನಮೂದಿಸಿ',
@@ -5530,7 +5979,6 @@ function applyLanguageUI() {
   setTextSafe('loginGoogleBtn', t('continue_google'));
   setTextSafe('loginMicrosoftBtn', t('continue_microsoft'));
   const sidebarText = {
-    'snav-home': 'nav_admin_panel',
     'snav-raise': 'nav_raise',
     'snav-track': 'nav_track',
     'snav-chat': 'nav_chat',
@@ -5547,6 +5995,12 @@ function applyLanguageUI() {
     const el = document.querySelector('#' + id + ' .sb-text');
     if(el) el.textContent = t(key);
   });
+  const homeNavText = document.querySelector('#snav-home .sb-text');
+  if(homeNavText) {
+    homeNavText.textContent = isAdminUser(currentUser)
+      ? t('nav_admin_panel')
+      : t('home_workspace_title').replace(/<[^>]+>/g, '').replace(/^✨\s*/, '');
+  }
   const allTicketsNav = document.querySelector('#snav-all .sb-text');
   if(allTicketsNav) allTicketsNav.textContent = t('page_all_title').replace(/<[^>]+>/g, '');
   const poshBtn = document.querySelector('.sidebar .sb-item:nth-of-type(7) .sb-text');
@@ -5661,32 +6115,49 @@ function applyLanguageUI() {
   if(chatInp) chatInp.placeholder = getLocalizedChatInputPlaceholder();
   const quickCardDescs = document.querySelectorAll('#homeQuickGrid .qc-desc');
   const quickCardLabels = document.querySelectorAll('#homeQuickGrid .qc-label');
-  const userQuickKeys = currentUser && currentUser.userType === 'manager'
-    ? [
-        ['nav_conduct','quick_conduct_desc'],
-        ['nav_raise','quick_raise_desc'],
-        ['nav_track','quick_track_desc'],
-        ['nav_chat','quick_chat_desc'],
-        ['nav_kb','quick_kb_desc'],
-        ['nav_forum','quick_forum_desc'],
-        ['nav_posh','quick_posh_desc'],
-        ['nav_referral','quick_referral_desc'],
-        ['nav_tasks','quick_tasks_desc']
-      ]
-    : [
-        ['nav_raise','quick_raise_desc'],
-        ['nav_track','quick_track_desc'],
-        ['nav_chat','quick_chat_desc'],
-        ['nav_kb','quick_kb_desc'],
-        ['nav_forum','quick_forum_desc'],
-        ['nav_posh','quick_posh_desc'],
-        ['nav_referral','quick_referral_desc'],
-        ['nav_tasks','quick_tasks_desc']
-      ];
-  userQuickKeys.forEach(([labelKey, descKey], idx) => {
-    if(quickCardLabels[idx]) quickCardLabels[idx].textContent = t(labelKey);
-    if(quickCardDescs[idx]) quickCardDescs[idx].textContent = t(descKey);
-  });
+  if(isAdminUser(currentUser)) {
+    const adminUi = getAdminCardUi();
+    const adminQuickCards = [
+      { label: t('page_all_title').replace(/<[^>]+>/g,''), desc: adminUi.manageRequests },
+      { label: t('nav_reports'), desc: adminUi.analytics },
+      { label: t('nav_settings'), desc: adminUi.configure },
+      { label: t('nav_integration'), desc: adminUi.connect },
+      { label: t('nav_chat'), desc: adminUi.testAssistant },
+      { label: t('nav_forum'), desc: adminUi.reviewThreads },
+      { label: t('nav_raise'), desc: adminUi.manualRequest }
+    ];
+    adminQuickCards.forEach((card, idx) => {
+      if(quickCardLabels[idx]) quickCardLabels[idx].textContent = card.label;
+      if(quickCardDescs[idx]) quickCardDescs[idx].textContent = card.desc;
+    });
+  } else {
+    const userQuickKeys = currentUser && currentUser.userType === 'manager'
+      ? [
+          ['nav_conduct','quick_conduct_desc'],
+          ['nav_raise','quick_raise_desc'],
+          ['nav_track','quick_track_desc'],
+          ['nav_chat','quick_chat_desc'],
+          ['nav_kb','quick_kb_desc'],
+          ['nav_forum','quick_forum_desc'],
+          ['nav_posh','quick_posh_desc'],
+          ['nav_referral','quick_referral_desc'],
+          ['nav_tasks','quick_tasks_desc']
+        ]
+      : [
+          ['nav_raise','quick_raise_desc'],
+          ['nav_track','quick_track_desc'],
+          ['nav_chat','quick_chat_desc'],
+          ['nav_kb','quick_kb_desc'],
+          ['nav_forum','quick_forum_desc'],
+          ['nav_posh','quick_posh_desc'],
+          ['nav_referral','quick_referral_desc'],
+          ['nav_tasks','quick_tasks_desc']
+        ];
+    userQuickKeys.forEach(([labelKey, descKey], idx) => {
+      if(quickCardLabels[idx]) quickCardLabels[idx].textContent = t(labelKey);
+      if(quickCardDescs[idx]) quickCardDescs[idx].textContent = t(descKey);
+    });
+  }
   setTextSafe('saveAiSettingsBtn', t('save_ai_settings'));
   setTextSafe('saveKnowledgeSettingsBtn', t('save_knowledge_sources'));
   setTextSafe('sheetSyncLinkBtn', t('generate_sync_link'));
@@ -6245,7 +6716,7 @@ function getLocalizedSectionUi() {
       },
       hrms: {
         pageTitle: '🔗 HRMS <em>Integration</em>',
-        pageDesc: 'Connect Bloomie Helpdesk with your HRMS to enable auto-fill, leave data, and employee lookup.',
+        pageDesc: 'Connect Bloomie with your HRMS to enable auto-fill, leave data, and employee lookup.',
         selectPlatform: 'Select your HRMS Platform',
         notConnected: 'Not connected',
         configureUrl: 'Configure URL',
@@ -6268,20 +6739,20 @@ function getLocalizedSectionUi() {
         connectTitle: 'Connect your HRMS',
         connectMeta: 'Enter your HRMS URL and API credentials. Bloomie supports Keka, Darwinbox, HR One, greytHR, BambooHR, and any REST API.',
         syncTitle: 'Data syncs automatically',
-        syncMeta: 'Leave balances, attendance records, and employee data sync from your HRMS. Bloomie AI uses this data to answer employee queries accurately.',
-        smartTitle: 'Bloomie AI gets smarter',
-        smartMeta: 'With HRMS data, Bloomie can answer "How many leaves do I have?" or "Is my attendance regularised?" with real-time accuracy.',
+        syncMeta: 'Leave balances, attendance records, and employee data sync from your HRMS. Bloomie uses this data as one input for guided answers.',
+        smartTitle: 'Bloomie guidance improves',
+        smartMeta: 'With HRMS data and approved sources, Bloomie can answer "How many leaves do I have?" or "Is my attendance regularised?" with current configured context.',
         autofillTitle: 'Ticket auto-fill',
         autofillMeta: 'When employees raise tickets, their details auto-fill from the HRMS, reducing friction.'
       },
       settings: {
-        pageDesc: 'Configure Bloomie Helpdesk for your organisation.',
+        pageDesc: 'Configure Bloomie for your organisation.',
         orgTitle: '🏢 Organisation',
         orgName: 'Organisation Name',
         hrEmail: 'HR Contact Email',
         portalUrl: 'Portal URL / Identifier',
         save: '💾 Save',
-        assistantTitle: '🤖 Bloomie Assistant',
+        assistantTitle: '🐝 Bloomie Assistant',
         mascotCharacter: 'Mascot Character',
         assistantName: 'Assistant Name',
         preferredLanguage: 'Preferred Language',
@@ -6365,13 +6836,13 @@ function getLocalizedSectionUi() {
         autofillMeta: 'कर्मचारी जब ticket raise करते हैं, उनकी details HRMS से auto-fill हो जाती हैं।'
       },
       settings: {
-        pageDesc: 'अपने संगठन के लिए Bloomie Helpdesk कॉन्फ़िगर करें।',
+        pageDesc: 'अपने संगठन के लिए Bloomie कॉन्फ़िगर करें।',
         orgTitle: '🏢 संगठन',
         orgName: 'संगठन का नाम',
         hrEmail: 'HR संपर्क ईमेल',
         portalUrl: 'पोर्टल URL / पहचान',
         save: '💾 सेव करें',
-        assistantTitle: '🤖 Bloomie असिस्टेंट',
+        assistantTitle: '🐝 Bloomie असिस्टेंट',
         mascotCharacter: 'मैस्कॉट कैरेक्टर',
         assistantName: 'असिस्टेंट का नाम',
         preferredLanguage: 'पसंदीदा भाषा',
@@ -6424,7 +6895,7 @@ function getLocalizedSectionUi() {
       },
       settings: {
         orgTitle: '🏢 ਸੰਸਥਾ',
-        assistantTitle: '🤖 Bloomie ਅਸਿਸਟੈਂਟ',
+        assistantTitle: '🐝 Bloomie ਅਸਿਸਟੈਂਟ',
         slaTitle: '📋 SLA ਸੰਰਚਨਾ',
         securityTitle: '🔑 ਐਕਸੈਸ ਅਤੇ ਸੁਰੱਖਿਆ',
         founderTitle: '👑 Founder Access Control',
@@ -6447,7 +6918,7 @@ function getLocalizedSectionUi() {
       },
       settings: {
         orgTitle: '🏢 সংস্থা',
-        assistantTitle: '🤖 Bloomie অ্যাসিস্ট্যান্ট',
+        assistantTitle: '🐝 Bloomie অ্যাসিস্ট্যান্ট',
         slaTitle: '📋 SLA কনফিগারেশন',
         securityTitle: '🔑 অ্যাক্সেস ও সিকিউরিটি',
         founderTitle: '👑 Founder Access Control',
@@ -6470,7 +6941,7 @@ function getLocalizedSectionUi() {
       },
       settings: {
         orgTitle: '🏢 संस्था',
-        assistantTitle: '🤖 Bloomie असिस्टंट',
+        assistantTitle: '🐝 Bloomie असिस्टंट',
         slaTitle: '📋 SLA कॉन्फिगरेशन',
         securityTitle: '🔑 प्रवेश आणि सुरक्षा',
         founderTitle: '👑 Founder Access Control',
@@ -6493,7 +6964,7 @@ function getLocalizedSectionUi() {
       },
       settings: {
         orgTitle: '🏢 நிறுவனம்',
-        assistantTitle: '🤖 Bloomie உதவியாளர்',
+        assistantTitle: '🐝 Bloomie உதவியாளர்',
         slaTitle: '📋 SLA அமைப்பு',
         securityTitle: '🔑 அணுகல் மற்றும் பாதுகாப்பு',
         founderTitle: '👑 Founder Access Control',
@@ -6516,7 +6987,7 @@ function getLocalizedSectionUi() {
       },
       settings: {
         orgTitle: '🏢 సంస్థ',
-        assistantTitle: '🤖 Bloomie అసిస్టెంట్',
+        assistantTitle: '🐝 Bloomie అసిస్టెంట్',
         slaTitle: '📋 SLA కాన్ఫిగరేషన్',
         securityTitle: '🔑 యాక్సెస్ మరియు సెక్యూరిటీ',
         founderTitle: '👑 Founder Access Control',
@@ -6539,7 +7010,7 @@ function getLocalizedSectionUi() {
       },
       settings: {
         orgTitle: '🏢 സംഘടന',
-        assistantTitle: '🤖 Bloomie അസിസ്റ്റന്റ്',
+        assistantTitle: '🐝 Bloomie അസിസ്റ്റന്റ്',
         slaTitle: '📋 SLA കോൺഫിഗറേഷൻ',
         securityTitle: '🔑 ആക്സസും സുരക്ഷയും',
         founderTitle: '👑 Founder Access Control',
@@ -6562,7 +7033,7 @@ function getLocalizedSectionUi() {
       },
       settings: {
         orgTitle: '🏢 ಸಂಸ್ಥೆ',
-        assistantTitle: '🤖 Bloomie ಸಹಾಯಕ',
+        assistantTitle: '🐝 Bloomie ಸಹಾಯಕ',
         slaTitle: '📋 SLA ಸಂರಚನೆ',
         securityTitle: '🔑 ಪ್ರವೇಶ ಮತ್ತು ಭದ್ರತೆ',
         founderTitle: '👑 Founder Access Control',
@@ -6607,7 +7078,7 @@ function getLocalizedForumUi() {
       accept: 'Accept',
       useful: 'Useful',
       escalate: 'Escalate to Ticket',
-      aiDirection: 'Bloomie AI Direction',
+      aiDirection: 'Bloomie Guidance Direction',
       noReplies: 'No replies yet. Add the first practical answer.'
     },
     'hi-IN': {
@@ -6625,7 +7096,7 @@ function getLocalizedForumUi() {
       accept: 'स्वीकार करें',
       useful: 'उपयोगी',
       escalate: 'Ticket में escalate करें',
-      aiDirection: 'Bloomie AI दिशा',
+      aiDirection: 'Bloomie Guidance दिशा',
       noReplies: 'अभी कोई जवाब नहीं है। पहला व्यावहारिक जवाब जोड़ें।'
     },
     'en-IN-hinglish': {
@@ -6643,7 +7114,7 @@ function getLocalizedForumUi() {
       accept: 'Accept',
       useful: 'Useful',
       escalate: 'Ticket mein escalate karo',
-      aiDirection: 'Bloomie AI Direction',
+      aiDirection: 'Bloomie Guidance Direction',
       noReplies: 'Abhi koi reply nahin hai. Pehla practical answer add karo.'
     }
   };
@@ -6795,11 +7266,11 @@ function getMemoryStorageKey(user = currentUser) {
 }
 function getAllMemoryStorageKeys() {
   const prefix = 'bloomie_hd_memory__' + getStorageTenantCode() + '__';
-  return Object.keys(localStorage).filter(key => key.startsWith(prefix));
+  return Object.keys(sessionStorage).filter(key => key.startsWith(prefix));
 }
 function loadChatMemory(user = currentUser) {
   try {
-    const saved = JSON.parse(localStorage.getItem(getMemoryStorageKey(user))) || [];
+    const saved = JSON.parse(sessionStorage.getItem(getMemoryStorageKey(user))) || [];
     return Array.isArray(saved) ? saved.filter(item => item && (item.role === 'user' || item.role === 'bot')).slice(-50) : [];
   } catch(e) {
     return [];
@@ -6807,7 +7278,7 @@ function loadChatMemory(user = currentUser) {
 }
 function persistChatMemory() {
   if(!currentUser) return;
-  localStorage.setItem(getMemoryStorageKey(currentUser), JSON.stringify(chatHistory.slice(-50)));
+  sessionStorage.setItem(getMemoryStorageKey(currentUser), JSON.stringify(chatHistory.slice(-50)));
 }
 function renderChatEntry(role, text) {
   const msgs = document.getElementById('chatMessages');
@@ -6829,7 +7300,7 @@ function deleteMyBloomieMemory() {
   closeAccountMenu();
   if(!currentUser) return;
   if(!confirm('Delete your saved Bloomie conversation memory?')) return;
-  localStorage.removeItem(getMemoryStorageKey(currentUser));
+  sessionStorage.removeItem(getMemoryStorageKey(currentUser));
   chatHistory = [];
   const msgs = document.getElementById('chatMessages');
   if(msgs) msgs.innerHTML = '';
@@ -6840,7 +7311,7 @@ function deleteAllBloomieMemories() {
   closeAccountMenu();
   if(!requireRole(['admin','master'], 'Only admins can delete all Bloomie memories.')) return;
   if(!confirm('Delete saved Bloomie memories for all users on this device?')) return;
-  getAllMemoryStorageKeys().forEach(key => localStorage.removeItem(key));
+  getAllMemoryStorageKeys().forEach(key => sessionStorage.removeItem(key));
   chatHistory = [];
   const msgs = document.getElementById('chatMessages');
   if(msgs) msgs.innerHTML = '';
@@ -6857,29 +7328,26 @@ function renderChatMarkup(text) {
 }
 async function restoreBackendSession() {
   const params = new URLSearchParams(window.location.search);
-  const ssoToken = params.get('ssoToken');
   const tenantCode = params.get('tenantCode');
-  if(ssoToken) {
-    setBackendSession(ssoToken, tenantCode || API_STATE.tenantCode || 'DEFAULT');
-    params.delete('ssoToken');
+  if(tenantCode) {
+    setBackendSession('', tenantCode || API_STATE.tenantCode || '');
     params.delete('tenantCode');
     const cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
     window.history.replaceState({}, '', cleanUrl);
-  }
-  const savedUser = getSavedSessionUser();
-  if(!hasBackendSession()) {
-    saveSessionUser(null);
-    return false;
   }
   try {
     const data = await apiRequest('/api/auth/session');
     if(!data || !data.user) throw new Error('Session not found');
     currentUser = data.user;
+    API_STATE.sessionActive = true;
+    API_STATE.token = '';
+    setBackendSession('', data.tenant && data.tenant.code);
     saveSessionUser(currentUser);
     await startSession(currentUser);
     return true;
   } catch (err) {
-    setBackendSession('', API_STATE.tenantCode || 'DEFAULT');
+    API_STATE.sessionActive = false;
+    setBackendSession('', API_STATE.tenantCode || '');
     saveSessionUser(null);
     currentUser = null;
     return false;
@@ -7024,8 +7492,8 @@ async function doLogin() {
 
   try {
     await new Promise(resolve => setTimeout(resolve, 350));
-    if (!u || !p) {
-      showLoginMsg('loginMsg', '⚠️ Enter your employee ID or email and password to continue.', 'error');
+    if (!tenantCode || !u || !p) {
+      showLoginMsg('loginMsg', '⚠️ Enter your company code, employee ID or email, and password to continue.', 'error');
       return;
     }
 
@@ -7038,7 +7506,8 @@ async function doLogin() {
       method:'POST',
       body:{ tenantCode, identifier: u, password: p }
     });
-    setBackendSession(data.token, data.tenant && data.tenant.code);
+    API_STATE.sessionActive = true;
+    setBackendSession('', data.tenant && data.tenant.code);
     currentUser = data.user;
     await startSession(currentUser);
     return;
@@ -7114,7 +7583,8 @@ async function doRegister() {
       showLoginMsg('loginMsg', '✅ Account created! Enter your password to sign in.', 'success');
     }, 1200);
   } catch (err) {
-    if(err && err.status === 409) showLoginMsg('registerMsg', '❌ An account with this Employee ID or email already exists.', 'error');
+    if(err && err.status === 403) showLoginMsg('registerMsg', '⛔ Self-registration is disabled for this workspace. Contact your Admin or Master Admin for access.', 'error');
+    else if(err && err.status === 409) showLoginMsg('registerMsg', '❌ An account with this Employee ID or email already exists.', 'error');
     else reportRuntimeError(err, 'Registration failed');
   } finally {
     btn.disabled = false;
@@ -7164,9 +7634,10 @@ async function startSession(user) {
   try { renderMyTasks(); } catch (err) { reportRuntimeError(err, 'Tasks init failed'); }
   try { renderConductActions(); } catch (err) { reportRuntimeError(err, 'Conduct init failed'); }
   try {
+    const appRequestedPage = getRequestedAppPage(user);
     const preferredPage = getSavedPage(user);
     const defaultPage = getDefaultPageForUser(user);
-    const nextPage = preferredPage && canAccessPage(preferredPage, user) ? preferredPage : defaultPage;
+    const nextPage = appRequestedPage || (preferredPage && canAccessPage(preferredPage, user) ? preferredPage : defaultPage);
     baseShowPage(nextPage, getNavButtonForPage(nextPage));
   } catch (err) { reportRuntimeError(err, 'Initial navigation failed'); }
   try { maybeOpenSetupMode(); } catch (err) { reportRuntimeError(err, 'Setup mode failed'); }
@@ -7202,16 +7673,18 @@ function configureHomePanel(user) {
   const managerMode = !!(user && user.role === 'user' && user.userType === 'manager');
   const adminUi = getAdminCardUi();
   const homeBtn = document.getElementById('snav-home');
-  if(homeBtn) homeBtn.style.display = adminMode ? '' : 'none';
-  setHtmlSafe('homePanelTitle', adminMode ? '🛠️ <em>Admin Panel</em>' : '✨ <em>Bloomie Workspace</em>');
+  const homeBtnText = document.querySelector('#snav-home .sb-text');
+  if(homeBtn) homeBtn.style.display = '';
+  if(homeBtnText) homeBtnText.textContent = adminMode ? t('nav_admin_panel') : t('home_workspace_title').replace(/<[^>]+>/g, '').replace(/^✨\s*/, '');
+  setHtmlSafe('homePanelTitle', adminMode ? t('home_admin_title') : t('home_workspace_title'));
   setTextSafe('homePanelDesc', adminMode
     ? adminUi.monitor
-    : 'Core employee actions only.');
+    : t('home_workspace_desc'));
   setTextSafe('homeRecentTitle', adminMode ? '📋 Recent Tickets' : '📋 My Recent Tickets');
   setTextSafe('homeRecentDesc', adminMode ? adminUi.latest : 'Your latest requests');
   const recentBtn = document.getElementById('homeRecentBtn');
   if(recentBtn) {
-    recentBtn.textContent = adminMode ? 'View all tickets →' : 'View all recent tickets →';
+    recentBtn.textContent = adminMode ? t('home_recent_btn_admin') : t('home_recent_btn_user');
     recentBtn.onclick = function() {
       showPage(adminMode ? 'all' : 'my', document.getElementById(adminMode ? 'snav-all' : 'snav-my'));
     };
@@ -7223,14 +7696,14 @@ function configureHomePanel(user) {
     { icon:'📊', label:t('nav_reports'), desc:adminUi.analytics, action:"showPage('reports',document.getElementById('snav-reports'))" },
     { icon:'⚙️', label:t('nav_settings'), desc:adminUi.configure, action:"showPage('setup',document.getElementById('snav-setup'))" },
     { icon:'🔗', label:t('nav_integration'), desc:adminUi.connect, action:"showPage('integration',document.getElementById('snav-integration'))" },
-    { icon:'🤖', label:t('nav_chat'), desc:adminUi.testAssistant, action:"openBloomieChat()" },
+    { icon:'🐝', label:t('nav_chat'), desc:adminUi.testAssistant, action:"openBloomieChat()" },
     { icon:'💬', label:t('nav_forum'), desc:adminUi.reviewThreads, action:"showPage('forum',document.getElementById('snav-forum'))" },
     { icon:'🎫', label:t('nav_raise'), desc:adminUi.manualRequest, action:"showPage('raise',document.getElementById('snav-raise'))" }
   ];
   const userCards = [
     { icon:'🎫', label:t('nav_raise'), desc:t('quick_raise_desc'), action:"showPage('raise',document.getElementById('snav-raise'))" },
     { icon:'🔍', label:t('nav_track'), desc:t('quick_track_desc'), action:"showPage('track',document.getElementById('snav-track'))" },
-    { icon:'🤖', label:t('nav_chat'), desc:t('quick_chat_desc'), action:"openBloomieChat()" },
+    { icon:'🐝', label:t('nav_chat'), desc:t('quick_chat_desc'), action:"openBloomieChat()" },
     { icon:'📚', label:t('nav_kb'), desc:t('quick_kb_desc'), action:"showPage('kb',document.getElementById('snav-kb'))" },
     { icon:'💬', label:t('nav_forum'), desc:t('quick_forum_desc'), action:"showPage('forum',document.getElementById('snav-forum'))" },
     { icon:'🛡️', label:t('nav_posh'), desc:t('quick_posh_desc'), action:"filterRaise('POSH / Harassment')" },
@@ -7242,7 +7715,7 @@ function configureHomePanel(user) {
   userCards.push({ icon:'🗂️', label:t('nav_tasks'), desc:t('quick_tasks_desc'), action:"showPage('tasks',document.getElementById('snav-tasks'))" });
   const cards = adminMode ? adminCards : userCards;
   quick.innerHTML = cards.map(card => `
-    <div class="quick-card" onclick="${card.action}">
+    <div class="quick-card" data-legacy-click="${card.action}">
       <div class="qc-icon">${card.icon}</div>
       <div class="qc-label">${card.label}</div>
       <div class="qc-desc">${card.desc}</div>
@@ -7254,7 +7727,8 @@ function doLogout() {
   if(hasBackendSession()) {
     apiRequest('/api/auth/logout', { method:'POST' }).catch(() => {});
   }
-  setBackendSession('', API_STATE.tenantCode || 'DEFAULT');
+  API_STATE.sessionActive = false;
+  setBackendSession('', API_STATE.tenantCode || '');
   saveSessionUser(null);
   clearSavedPage();
   currentUser = null;
@@ -7332,10 +7806,10 @@ function openBloomieChat(prompt) {
 function canAccessPage(name, user = currentUser) {
   if(!user) return false;
   const role = user.role || 'user';
-  const sharedPages = new Set(['profile']);
+  const sharedPages = new Set(['home','profile']);
   const userPages = new Set(['raise','track','chat','kb','forum','my','tasks']);
   const managerPages = new Set(['conduct']);
-  const adminPages = new Set(['home','all','reports','integration','setup']);
+  const adminPages = new Set(['all','reports','integration','setup']);
   if(sharedPages.has(name)) return true;
   if(role === 'master' || role === 'admin') return adminPages.has(name) || userPages.has(name) || managerPages.has(name);
   if(user && user.userType === 'manager') return userPages.has(name) || managerPages.has(name);
@@ -7343,7 +7817,7 @@ function canAccessPage(name, user = currentUser) {
 }
 
 function getDefaultPageForUser(user = currentUser) {
-  return isAdminUser(user) ? 'home' : 'raise';
+  return 'home';
 }
 
 function getNavButtonForPage(name) {
@@ -7379,6 +7853,7 @@ function baseShowPage(name, btn) {
   if(name === 'all') renderAllTickets('', '', '');
   if(name === 'reports') initReports();
   if(name === 'setup') initSetupPage();
+  if(name === 'profile') initProfilePreferences();
   if(name === 'kb') renderKnowledgeBasePage();
   if(name === 'forum') initForumPage();
   if(name === 'chat') initChatPage();
@@ -7409,6 +7884,80 @@ let mascotBehaviorReady = false;
 let mascotDragReady = false;
 let mascotRoutineTimer = null;
 let currentMascotState = 'idle';
+let mascotIdleTimer = null;
+let mascotLastHintKey = '';
+let mascotLastIdlePromptAt = 0;
+let mascotLastCelebrateAt = 0;
+
+function getActivePageId() {
+  return (Array.from(document.querySelectorAll('.page.active')).map(n => n.id)[0] || '');
+}
+
+function getMascotPageHint(pageId) {
+  const hints = {
+    'page-home': 'Pick one card and I will help you move quickly.',
+    'page-raise': 'Share the basics first. I can help route the ticket after that.',
+    'page-track': 'Paste a ticket number and I will help you follow the status.',
+    'page-chat': 'Ask in plain words. I will guide you step by step.',
+    'page-kb': 'Search here when you want a quick answer without raising a ticket.',
+    'page-forum': 'Use the forum for reusable questions. Use tickets for private issues.',
+    'page-my': 'These are your recent requests. Open one if you want the next update.',
+    'page-tasks': 'Finish the pending task here and I will cheer you on.',
+    'page-conduct': 'Start with misconduct type, repercussions, and process so the case stays clear.',
+    'page-all': 'This is the team queue. Filter first, then take action.',
+    'page-reports': 'Use reports for trends, not single-case decisions.',
+    'page-setup': 'Complete setup once and Bloomie gets much smarter.'
+  };
+  return hints[pageId] || 'I can help you find the next step.';
+}
+
+function mascotGuideForPage(pageId, options) {
+  const opts = options || {};
+  const hint = getMascotPageHint(pageId);
+  const key = pageId + '|' + hint;
+  if(!opts.force && mascotLastHintKey === key) return;
+  mascotLastHintKey = key;
+  if(opts.animate !== false) setMascotState(opts.state || 'waving', opts.duration || 1800);
+  mascotSay(hint, opts.sayDuration || 2600);
+}
+
+function mascotCelebrate(message, state) {
+  const now = Date.now();
+  if(now - mascotLastCelebrateAt < 900) return;
+  mascotLastCelebrateAt = now;
+  setMascotState(state || 'excited', 2200);
+  mascotSay(message, 3200);
+}
+
+function resetMascotIdleTimer() {
+  clearTimeout(mascotIdleTimer);
+  mascotIdleTimer = setTimeout(() => {
+    const now = Date.now();
+    if(now - mascotLastIdlePromptAt < 20000) return;
+    mascotLastIdlePromptAt = now;
+    const pageId = getActivePageId();
+    const prompts = {
+      'page-raise': 'Want help writing the issue clearly? I can do that.',
+      'page-track': 'If you have the ticket ID, we can check it now.',
+      'page-chat': 'Type one short question and I will take it from there.',
+      'page-kb': 'Try a quick keyword. Leave, payroll, POSH, or onboarding all work.',
+      'page-forum': 'Need a reusable answer? The forum is good for that.',
+      'page-tasks': 'A small acknowledgement now keeps the queue moving.',
+      'page-conduct': 'Clear wording here will help the employee understand the action.'
+    };
+    mascotSay(prompts[pageId] || 'Need a hand? Tap me and I will guide you.', 3200);
+    setMascotState('waving', 1800);
+  }, 45000);
+}
+
+function initMascotGuidance() {
+  if(window.__mascotGuidanceReady) return;
+  window.__mascotGuidanceReady = true;
+  ['mousemove','mousedown','keydown','touchstart','scroll'].forEach(evt => {
+    document.addEventListener(evt, () => resetMascotIdleTimer(), { passive:true });
+  });
+  resetMascotIdleTimer();
+}
 
 function setMascotState(state, duration) {
   const cfg = getConfig();
@@ -7440,18 +7989,21 @@ function runMascotRoutine(force) {
   if(cfg.mascotMotion === false) return;
   const states = ['idle','jump','spin','run','sleep','waving','bouncing'];
   const state = force || states[Math.floor(Math.random()*states.length)];
-  const speakMap = {
-    jump: 'Jumping into action.',
-    spin: 'Spinning up a quick answer.',
-    run: 'Running to the right workflow.',
-    sleep: 'Resting until someone needs help.',
-    waving: 'Bloomie is online.',
-    bouncing: 'Ready for a fresh request.',
-    idle: 'Standing by for helpdesk support.'
-  };
   const duration = state === 'sleep' ? 5200 : 2600;
   setMascotState(state, duration);
-  if(state === 'sleep') mascotSay('Zzz... Bloomie is still listening.', 2600);
+  if(state === 'sleep') mascotSay('I am still here if you need me.', 2600);
+  else if(Math.random() > 0.76) {
+    const nudges = {
+      jump: ['New task? I can point you there.', 'Let us knock out the next step.'],
+      spin: ['Need a quick answer or quick routing?', 'I can help you move faster.'],
+      run: ['Let us go straight to the right workflow.', 'I know where the next action lives.'],
+      waving: ['I am online and ready.', 'Tap me if you want help fast.'],
+      bouncing: ['One small step and we are moving.', 'Let us keep the momentum up.'],
+      idle: ['I am keeping watch for your next task.', 'Need help? I can guide you.']
+    };
+    const options = nudges[state] || nudges.idle;
+    mascotSay(options[Math.floor(Math.random() * options.length)], 2400);
+  }
   mascotRoutineTimer = setTimeout(() => runMascotRoutine(), state === 'sleep' ? 9000 : 6500 + Math.floor(Math.random()*2200));
 }
 
@@ -7474,7 +8026,7 @@ function applyMascotMotionState() {
 
 function initMascot() {
   const cfg = getConfig();
-  const type = cfg.mascot || 'bee';
+  const type = cfg.mascot || 'owl';
   const sprite = document.getElementById('mascotSprite');
   if(sprite) {
     sprite.innerHTML = getMascotSVG(type, 90, 110);
@@ -7502,6 +8054,7 @@ function initMascot() {
   }
   initMascotDrag();
   initMascotBehavior();
+  initMascotGuidance();
   initMascotPreviews('devMascotOpts');
   initMascotPreviews('setupMascotOpts');
 }
@@ -7516,9 +8069,12 @@ function initMascotBehavior() {
   setInterval(function() {
     if(isDragging) return;
     const quips = [
-      "Need help? Just ask! 🤖", "I'm here for you! 💛",
-      "Ticket status? I can check! 🔍", "Ask me about HR policies! 📋",
-      "Remember — no question is too small! 😊", "I love helping! ✨"
+      "Need help? Tap me and I will guide you.",
+      "Still there? Let us finish one thing together.",
+      "Ticket status, policy, task, or setup. I can help.",
+      "No stress. Start with one click and I will walk with you.",
+      "Need a nudge? Open Ask Bloomie and let us move.",
+      "You are one step away from the right workflow."
     ];
     if(Math.random() > 0.7) {
       mascotSay(quips[Math.floor(Math.random() * quips.length)], 4000);
@@ -7529,19 +8085,29 @@ function mascotClick() {
   const sprite = document.getElementById('mascotSprite');
   const cfg = getConfig();
   if(!sprite) return;
-  if(cfg.mascotMotion === false) return;
+  const activePage = (Array.from(document.querySelectorAll('.page.active')).map(n => n.id)[0] || '');
+  if(activePage !== 'page-chat') {
+    openBloomieChat();
+  }
+  if(cfg.mascotMotion === false) {
+    mascotSay('Ask me anything. I can guide you step by step.', 3000);
+    return;
+  }
   const actions = ['jump','spin','run','sleep','excited','waving','bouncing'];
   const anim = actions[Math.floor(Math.random()*actions.length)];
   const duration = anim === 'sleep' ? 5200 : 2200;
   setMascotState(anim, duration);
   const msgs = [
-    "Hey! 👋 Ask me anything!", "Happy to help! 🌸",
-    "Open a ticket if you need HR support! 🎫",
-    "I know all the HR policies! 📚", "You can drag me around! 😄",
-    "Referral, POSH, tickets, and policy help all live here."
+    "Let us solve this together.",
+    "I can guide you to the right page right now.",
+    "Need HR support? I can open the right workflow.",
+    "Ask me about policy, payroll, tasks, or tickets.",
+    "Small question or big one, I am here.",
+    "I can help like a coach, not just a chatbot."
   ];
   mascotSay(msgs[Math.floor(Math.random()*msgs.length)], 3000);
   runMascotRoutine();
+  resetMascotIdleTimer();
 }
 function mascotSay(text, duration) {
   const cfg = getConfig();
@@ -7556,6 +8122,7 @@ function mascotSay(text, duration) {
     bubble.classList.remove('visible');
     if(sprite) sprite.className = 'mascot-sprite' + (cfg.mascotMotion === false ? '' : ' idle');
   }, duration || 3500);
+  resetMascotIdleTimer();
 }
 function initMascotDrag() {
   const mw = document.getElementById('mascotWrap');
@@ -7623,8 +8190,9 @@ function initMascotPreviews(containerId) {
   if(!container) return;
   container.innerHTML = '';
   const cfg = getConfig();
-  const sel = cfg.mascot || 'bee';
+  const sel = cfg.mascot || 'owl';
   Object.entries(MASCOTS).forEach(([key, m]) => {
+    if(key === 'robot') return;
     const el = document.createElement('div');
     el.className = 'mascot-opt' + (key === sel ? ' selected' : '');
     el.dataset.mascot = key;
@@ -7640,6 +8208,7 @@ function selectMascot(el, name, containerId) {
   toast('✓ Mascot changed to ' + getMascotLabel(name) + '!');
 }
 function applyMascotType(name) {
+  name = normalizeMascotType(name);
   saveConfig({ mascot: name });
   ['mascotSprite','chatMascotMini','heroMascotArea','loginMascot'].forEach(id => {
     const el = document.getElementById(id);
@@ -7868,17 +8437,17 @@ function renderMyTickets(statusF, searchQ) {
   if(!cont) return;
   const ticketUi = getLocalizedTicketUi();
   if(!mine.length) {
-    cont.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">${escapeHtml(ticketUi.noTicketsFound)}</div><div class="empty-desc">${escapeHtml(ticketUi.tryDifferentFilter)}</div><button class="btn btn-primary" style="margin-top:16px" onclick="showPage('raise',document.getElementById('snav-raise'))">🎫 ${escapeHtml(ticketUi.raiseTicket)}</button></div>`;
+    cont.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">${escapeHtml(ticketUi.noTicketsFound)}</div><div class="empty-desc">${escapeHtml(ticketUi.tryDifferentFilter)}</div><button class="btn btn-primary" style="margin-top:16px" data-legacy-click="showPage('raise',document.getElementById('snav-raise'))">🎫 ${escapeHtml(ticketUi.raiseTicket)}</button></div>`;
     return;
   }
   cont.innerHTML = '<table class="tkt-table"><thead><tr><th>Ticket ID</th><th>Category</th><th>Priority</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead><tbody>' +
-    mine.map(t => `<tr class="tkt-row" onclick="openTicketModal('${escapeAttr(t.id)}')">
+    mine.map(t => `<tr class="tkt-row" data-legacy-click="openTicketModal('${escapeAttr(t.id)}')">
       <td><span class="tkt-id">${escapeHtml(t.id)}</span></td>
       <td><div class="tkt-title">${escapeHtml(t.category)}</div><div class="tkt-meta">${escapeHtml(t.dept)} · ${escapeHtml(t.hotel||'')}</div></td>
       <td>${priorityBadge(t.priority)}</td>
       <td>${statusBadge(t.status)}</td>
       <td><div style="font-size:12.5px;color:var(--text)">${new Date(t.createdAt).toLocaleDateString('en-IN')}</div></td>
-      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openTicketModal('${escapeAttr(t.id)}')">${escapeHtml(ticketUi.view)}</button></td>
+      <td><button class="btn btn-ghost btn-sm" data-legacy-click="event.stopPropagation();openTicketModal('${escapeAttr(t.id)}')">${escapeHtml(ticketUi.view)}</button></td>
     </tr>`).join('') + '</tbody></table>';
   // Update badge
   const badge = document.getElementById('snavBadgeMy');
@@ -7914,7 +8483,7 @@ function renderAllTickets(statusF, priF, searchQ) {
   }
   const adminActions = (t) => {
     if(t.status==='resolved'||t.status==='closed') return '';
-    return `<select style="font-size:11.5px;background:var(--card2);border:1px solid var(--b2);border-radius:var(--r6);padding:4px 6px;color:var(--white)" onchange="updateTicketStatus('${escapeAttr(t.id)}',this.value)" onclick="event.stopPropagation()">
+    return `<select style="font-size:11.5px;background:var(--card2);border:1px solid var(--b2);border-radius:var(--r6);padding:4px 6px;color:var(--white)" data-legacy-change="updateTicketStatus('${escapeAttr(t.id)}',this.value)" data-legacy-click="event.stopPropagation()">
       <option value="">${escapeHtml(ticketUi.update)}</option>
       <option value="in-progress">In Progress</option>
       <option value="resolved">Resolved</option>
@@ -7923,14 +8492,14 @@ function renderAllTickets(statusF, priF, searchQ) {
     </select>`;
   };
   cont.innerHTML = '<table class="tkt-table"><thead><tr><th>ID</th><th>Raised By</th><th>Category</th><th>Priority</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>' +
-    tickets.map(t => `<tr class="tkt-row" onclick="openTicketModal('${escapeAttr(t.id)}')">
+    tickets.map(t => `<tr class="tkt-row" data-legacy-click="openTicketModal('${escapeAttr(t.id)}')">
       <td><span class="tkt-id">${escapeHtml(t.id)}</span></td>
       <td><div class="tkt-title">${escapeHtml(t.name)}</div><div class="tkt-meta">${escapeHtml(t.dept)}</div></td>
       <td>${escapeHtml(t.category)}</td>
       <td>${priorityBadge(t.priority)}</td>
       <td>${statusBadge(t.status)}</td>
       <td><span style="font-size:12px;color:var(--text)">${new Date(t.createdAt).toLocaleDateString('en-IN')}</span></td>
-      <td onclick="event.stopPropagation()">${adminActions(t)}</td>
+      <td data-legacy-click="event.stopPropagation()">${adminActions(t)}</td>
     </tr>`).join('') + '</tbody></table>';
   // Update badge
   const badge = document.getElementById('snavBadgeAll');
@@ -8025,10 +8594,10 @@ function openTicketModal(id) {
       <textarea class="form-textarea" id="modalHrResp" style="min-height:80px" placeholder="Write your response to the employee…">${t.hrResponse||''}</textarea>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-primary btn-sm" onclick="saveHRResponse('${escapeAttr(t.id)}')">💬 ${escapeHtml(ticketUi.saveResponse)}</button>
-      <button class="btn btn-secondary btn-sm" onclick="updateTicketStatus('${escapeAttr(t.id)}','resolved');closeTicketModal()">✅ ${escapeHtml(ticketUi.resolve)}</button>
-      <button class="btn btn-danger btn-sm" onclick="updateTicketStatus('${escapeAttr(t.id)}','escalated');closeTicketModal()">🚨 ${escapeHtml(ticketUi.escalate)}</button>
-      ${isMaster ? `<button class="btn btn-danger btn-sm" onclick="deleteTicket('${escapeAttr(t.id)}')">🗑️ ${escapeHtml(ticketUi.deleteTicket)}</button>` : ''}
+      <button class="btn btn-primary btn-sm" data-legacy-click="saveHRResponse('${escapeAttr(t.id)}')">💬 ${escapeHtml(ticketUi.saveResponse)}</button>
+      <button class="btn btn-secondary btn-sm" data-legacy-click="updateTicketStatus('${escapeAttr(t.id)}','resolved');closeTicketModal()">✅ ${escapeHtml(ticketUi.resolve)}</button>
+      <button class="btn btn-danger btn-sm" data-legacy-click="updateTicketStatus('${escapeAttr(t.id)}','escalated');closeTicketModal()">🚨 ${escapeHtml(ticketUi.escalate)}</button>
+      ${isMaster ? `<button class="btn btn-danger btn-sm" data-legacy-click="deleteTicket('${escapeAttr(t.id)}')">🗑️ ${escapeHtml(ticketUi.deleteTicket)}</button>` : ''}
     </div>` : ''}
   `;
   document.getElementById('tktModal').classList.add('open');
@@ -8115,7 +8684,7 @@ function renderRecentTickets() {
     return;
   }
   cont.innerHTML = mine.map(t => `
-    <div class="activity-item" onclick="openTicketModal('${t.id}')" style="cursor:pointer">
+    <div class="activity-item" data-legacy-click="openTicketModal('${t.id}')" style="cursor:pointer">
       <div class="act-icon">${t.status==='resolved'?'✅':t.status==='escalated'?'🚨':t.status==='in-progress'?'⚡':'🎫'}</div>
       <div class="act-body">
         <div class="act-title">${t.id} — ${t.category}</div>
@@ -8147,7 +8716,7 @@ function renderNotifications() {
     return;
   }
   list.innerHTML = notifications.slice(0,6).map(n => `
-    <div class="activity-item" onclick="markNotificationRead('${escapeAttr(n.id || '')}')">
+    <div class="activity-item" data-legacy-click="markNotificationRead('${escapeAttr(n.id || '')}')">
       <div class="act-icon">🔔</div>
       <div class="act-body">
         <div class="act-title">${escapeHtml(getNotificationCopy(n).title)} ${n.read ? '' : '<span style="color:var(--y)">•</span>'}</div>
@@ -8210,7 +8779,7 @@ function renderMyTasks() {
       <div style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px"><strong>${escapeHtml(ui.detailsLabel)}:</strong> ${escapeHtml(task.details || '—')}</div>
       ${task.status === 'pending' ? `
       <textarea class="form-textarea" id="taskAck-${escapeAttr(task.id)}" placeholder="${escapeAttr(t('tasks_ack_placeholder'))}" style="min-height:82px;margin-bottom:12px"></textarea>
-      <button class="btn btn-primary btn-sm" onclick="acknowledgeTask('${escapeAttr(task.id)}')">${escapeHtml(t('tasks_acknowledge'))}</button>` : `
+      <button class="btn btn-primary btn-sm" data-legacy-click="acknowledgeTask('${escapeAttr(task.id)}')">${escapeHtml(t('tasks_acknowledge'))}</button>` : `
       <div class="card-desc">${escapeHtml(task.acknowledgement || t('tasks_ack_done'))}</div>`}
     </div>
   `).join('');
@@ -8364,7 +8933,7 @@ function renderKnowledgeBasePage() {
       <div class="empty-icon">📚</div>
       <div class="empty-title">${escapeHtml(kbUi.emptyTitle)}</div>
       <div class="empty-desc">${escapeHtml(kbUi.emptyDesc)}</div>
-      <button class="btn btn-primary" style="margin-top:16px" onclick="showPage('setup',document.getElementById('snav-setup'))">${escapeHtml(kbUi.emptyAction)}</button>
+      <button class="btn btn-primary" style="margin-top:16px" data-legacy-click="showPage('setup',document.getElementById('snav-setup'))">${escapeHtml(kbUi.emptyAction)}</button>
     </div>`;
     return;
   }
@@ -8375,7 +8944,7 @@ function renderKnowledgeBasePage() {
       <div class="empty-icon">🗂️</div>
       <div class="empty-title">${escapeHtml(kbUi.pendingTitle)}</div>
       <div class="empty-desc">${escapeHtml(kbUi.pendingDesc)}</div>
-      <button class="btn btn-primary" style="margin-top:16px" onclick="showPage('setup',document.getElementById('snav-setup'))">${escapeHtml(kbUi.pendingAction)}</button>
+      <button class="btn btn-primary" style="margin-top:16px" data-legacy-click="showPage('setup',document.getElementById('snav-setup'))">${escapeHtml(kbUi.pendingAction)}</button>
     </div>`;
     return;
   }
@@ -8447,7 +9016,7 @@ function renderForumBoard() {
   list.innerHTML = posts.map(post => {
     const replies = getForumReplies().filter(r => r.postId === post.id).length;
     const active = forumState.selectedId === post.id ? ' active' : '';
-    return `<div class="forum-card${active}" onclick="openForumThread('${post.id}')">
+    return `<div class="forum-card${active}" data-legacy-click="openForumThread('${post.id}')">
       <div class="forum-card-top">
         <div>
           <div class="forum-card-title">${escapeHtml(post.title)}</div>
@@ -8498,8 +9067,8 @@ function openForumThread(id) {
       <div class="forum-thread-body">${escapeHtml(post.body)}</div>
       <div class="forum-tags" style="margin-top:12px">${(post.tags||[]).map(tag => `<span class="forum-tag">#${escapeHtml(tag)}</span>`).join('')}</div>
       <div class="forum-actions" style="margin-top:14px">
-        <button class="btn btn-secondary btn-sm" onclick="upvoteForumPost('${post.id}')">👍 ${escapeHtml(forumUi.useful)} (${post.upvotes || 0})</button>
-        <button class="btn btn-ghost btn-sm" onclick="showPage('raise',document.getElementById('snav-raise'))">🎫 ${escapeHtml(forumUi.escalate)}</button>
+        <button class="btn btn-secondary btn-sm" data-legacy-click="upvoteForumPost('${post.id}')">👍 ${escapeHtml(forumUi.useful)} (${post.upvotes || 0})</button>
+        <button class="btn btn-ghost btn-sm" data-legacy-click="showPage('raise',document.getElementById('snav-raise'))">🎫 ${escapeHtml(forumUi.escalate)}</button>
       </div>
       <div class="forum-ai-box">
         <div class="forum-ai-title">${escapeHtml(forumUi.aiDirection)}</div>
@@ -8521,7 +9090,7 @@ function openForumThread(id) {
                   ${reply.id === post.acceptedReplyId ? '<span style="color:var(--green)">' + escapeHtml(forumDyn.acceptedAnswer) + '</span>' : ''}
                 </div>
               </div>
-              ${canAccept && reply.id !== post.acceptedReplyId ? `<button class="btn btn-ghost btn-sm" onclick="acceptForumReply('${post.id}','${reply.id}')">${escapeHtml(forumUi.accept)}</button>` : ''}
+              ${canAccept && reply.id !== post.acceptedReplyId ? `<button class="btn btn-ghost btn-sm" data-legacy-click="acceptForumReply('${post.id}','${reply.id}')">${escapeHtml(forumUi.accept)}</button>` : ''}
             </div>
             <div class="forum-reply-body">${escapeHtml(reply.body)}</div>
           </div>
@@ -8532,7 +9101,7 @@ function openForumThread(id) {
       <div class="card-title" style="margin-bottom:10px">${escapeHtml(forumUi.addReply)}</div>
       <textarea class="form-textarea" id="forumReplyInp" placeholder="${escapeAttr(forumDyn.answerPlaceholder)}" style="min-height:110px"></textarea>
       <div class="forum-actions" style="margin-top:12px">
-        <button class="btn btn-primary btn-sm" onclick="submitForumReply('${post.id}')">${escapeHtml(forumUi.replyBtn)}</button>
+        <button class="btn btn-primary btn-sm" data-legacy-click="submitForumReply('${post.id}')">${escapeHtml(forumUi.replyBtn)}</button>
       </div>
     </div>
   `;
@@ -9072,11 +9641,12 @@ function initChatPage() {
   const cm = document.getElementById('chatMascotMini');
   if(cm && !cm.innerHTML.trim()) {
     const cfg = getConfig();
-    cm.innerHTML = getMascotSVG(cfg.mascot||'bee', 38, 46);
+    cm.innerHTML = getMascotSVG(cfg.mascot||'owl', 38, 46);
   }
   if(!chatHistory.length || !msgs.children.length) initChat();
   const sug = document.getElementById('chatSugs');
   if(sug && !chatHistory.length) sug.style.display = 'flex';
+  renderChatImageDraft();
 }
 function chatTopic(el, topic) {
   document.querySelectorAll('.chat-topic').forEach(t => t.classList.remove('active'));
@@ -9085,9 +9655,11 @@ function chatTopic(el, topic) {
 }
 function clearChat() {
   chatHistory = [];
-  if(currentUser) localStorage.removeItem(getMemoryStorageKey(currentUser));
+  chatImageDraft = null;
+  if(currentUser) sessionStorage.removeItem(getMemoryStorageKey(currentUser));
   const msgs = document.getElementById('chatMessages');
   if(msgs) msgs.innerHTML = '';
+  renderChatImageDraft();
   initChat();
 }
 function appendBotMsg(text) {
@@ -9105,6 +9677,22 @@ function appendUserMsg(text) {
   msgs.scrollTop = msgs.scrollHeight;
   chatHistory.push({ role:'user', text });
   persistChatMemory();
+}
+function appendBotImageResult(text, imageDataUrl, meta) {
+  appendBotMsg(text);
+  if(!imageDataUrl) return;
+  const msgs = document.getElementById('chatMessages');
+  if(!msgs) return;
+  const div = document.createElement('div');
+  div.className = 'chat-bubble bot';
+  div.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <img src="${escapeAttr(imageDataUrl)}" alt="AI edited result" style="width:100%;max-width:360px;border-radius:14px;border:1px solid var(--b1);display:block">
+      <div style="font-size:12px;color:var(--sub);font-family:var(--font-ui)">${escapeHtml(meta || 'Generated visual')}</div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 function showTyping() {
   const msgs = document.getElementById('chatMessages');
@@ -9146,14 +9734,14 @@ function getBotResponse(text) {
   const intentRules = [
     {
       keys:['organization size','100 employees','1000 employees','10000 employees','1 lakh','scale','scalable'],
-      response:`Bloomie is designed as a **local smart helpdesk assistant** for organizational scale.
+      response:`Bloomie is designed as a **guided helpdesk assistant** for organizational scale.
 
 • Works for smaller teams around **100 employees**
 • Can support large organizations up to **1 lakh employees**
-• Uses **structured logic, ML-style intent routing, policy retrieval, and workflow guidance**
+• Uses **structured logic, intent routing, configured knowledge, and workflow guidance**
 • Escalates sensitive or employee-specific cases into tracked tickets
 
-That means it behaves like AI for end users without depending on a live cloud LLM for every interaction.`
+That means it behaves like a guided assistant built from structured logic, configured sources, and optional live agent calls.`
     },
     {
       keys:['forum or ticket','public or private','ticket or forum','community or ticket'],
@@ -9192,6 +9780,108 @@ If the issue is personal, confidential, or unresolved, Bloomie should push it in
   // Default
   return getLocalizedDefaultChatFallback();
 }
+function prefillImageEditPrompt(prompt) {
+  const inp = document.getElementById('chatInp');
+  if(!inp) return;
+  inp.value = prompt || '';
+  autoGrowChat(inp);
+  inp.focus();
+}
+function renderChatImageDraft() {
+  const el = document.getElementById('chatImageDraft');
+  if(!el) return;
+  if(!chatImageDraft) {
+    el.style.display = 'none';
+    el.innerHTML = '';
+    return;
+  }
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <img src="${escapeAttr(chatImageDraft.dataUrl)}" alt="Draft edit input" style="width:84px;height:84px;object-fit:cover;border-radius:14px;border:1px solid var(--b1)">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font:600 13px var(--font-ui);color:var(--text)">${escapeHtml(chatImageDraft.name || 'Selected image')}</div>
+        <div style="font-size:12px;color:var(--sub)">Ready for AI edit. Add a prompt like "swap the background", "remove the chair", or "make this look like a campaign shoot".</div>
+      </div>
+    </div>
+  `;
+}
+function clearChatImageDraft() {
+  chatImageDraft = null;
+  const input = document.getElementById('chatImageInput');
+  if(input) input.value = '';
+  renderChatImageDraft();
+}
+function handleChatImageInput(event) {
+  const input = event && event.target;
+  const file = input && input.files ? input.files[0] : null;
+  if(!file) return;
+  if(!file.type.startsWith('image/')) {
+    toast('Please select an image file.', 'warn');
+    input.value = '';
+    return;
+  }
+  if(file.size > 4 * 1024 * 1024) {
+    toast('Choose an image under 4 MB for chat edits.', 'warn');
+    input.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    chatImageDraft = {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      dataUrl: String(reader.result || '')
+    };
+    renderChatImageDraft();
+    toast('🖼️ Image ready for AI editing', 'success');
+  };
+  reader.onerror = () => toast('Could not read the selected image.', 'warn');
+  reader.readAsDataURL(file);
+}
+function inferImageEditOperation(text) {
+  const lower = String(text || '').toLowerCase();
+  if(lower.includes('background')) return 'background-swap';
+  if(lower.includes('remove') || lower.includes('erase') || lower.includes('cleanup')) return 'object-removal';
+  if(lower.includes('campaign') || lower.includes('ad ') || lower.includes('editorial') || lower.includes('luxury')) return 'campaign-transform';
+  return 'general-edit';
+}
+function inferImageEditTarget(text) {
+  const lower = String(text || '');
+  const removal = lower.match(/remove\s+(.+?)(?:\.|,|$)/i);
+  if(removal) return removal[1].trim();
+  const background = lower.match(/background(?:\s+to|\s+with|\s+for)?\s+(.+?)(?:\.|,|$)/i);
+  if(background) return background[1].trim();
+  return '';
+}
+async function runChatImageEdit(text) {
+  if(!hasBackendSession()) throw new Error('Sign in through the backend before using real image edits.');
+  const approval = requestBotApproval('imageEdit', 'Prompt: ' + text);
+  if(approval === false) throw new Error('Approval cancelled');
+  const result = await apiRequestRaw('/api/ai/image-edit', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify({
+      prompt: text,
+      operation: inferImageEditOperation(text),
+      target: inferImageEditTarget(text),
+      imageDataUrl: chatImageDraft && chatImageDraft.dataUrl ? chatImageDraft.dataUrl : '',
+      approval
+    })
+  });
+  return result;
+}
+async function runLiveAgentChat(text) {
+  if(!hasBackendSession()) return null;
+  const approval = requestBotApproval('liveAgent', 'Prompt: ' + text);
+  if(approval === false) throw new Error('Approval cancelled');
+  const result = await apiRequest('/api/ai/live-agent/respond', {
+    method:'POST',
+    body:{ prompt: text, approval }
+  });
+  return result;
+}
 function sendChat() {
   const inp = document.getElementById('chatInp');
   const text = inp.value.trim();
@@ -9200,18 +9890,52 @@ function sendChat() {
   inp.style.height = 'auto';
   sendChatMsg(text);
 }
-function sendChatMsg(text) {
+async function sendChatMsg(text) {
   appendUserMsg(text);
   const sprite = document.getElementById('mascotSprite');
   if(sprite) { sprite.className = 'mascot-sprite talking'; }
   showTyping();
-  const delay = 600 + Math.random()*800;
-  setTimeout(() => {
-    removeTyping();
-    const resp = appendCitationsToResponse(getBotResponse(text), text);
-    appendBotMsg(resp);
-    if(sprite) sprite.className = 'mascot-sprite idle';
-  }, delay);
+  const isImageEdit = !!chatImageDraft;
+  if(isImageEdit) {
+    try {
+      const result = await runChatImageEdit(text);
+      removeTyping();
+      appendBotImageResult(
+        `**Visual edit complete**\n\nProvider: **${result.provider || 'configured model'}**\nPrompt used: ${result.revisedPrompt || text}`,
+        result.imageDataUrl,
+        'Rendered through the configured image-edit backend'
+      );
+      clearChatImageDraft();
+    } catch (err) {
+      removeTyping();
+      appendBotMsg(`I couldn't complete the image edit yet.\n\n**What to check**\n• admin image-edit provider settings\n• backend sign-in\n• local model endpoint or remote API credentials\n\nError: ${err.message}`);
+    } finally {
+      if(sprite) sprite.className = 'mascot-sprite idle';
+    }
+  } else {
+    try {
+      const live = await runLiveAgentChat(text);
+      removeTyping();
+      const used = live && Array.isArray(live.usedFunctions) && live.usedFunctions.length
+        ? `\n\n**Live functions used**\n• ${live.usedFunctions.join('\n• ')}`
+        : '';
+      const resp = live && live.response
+        ? live.response + used
+        : appendCitationsToResponse(getBotResponse(text), text);
+      appendBotMsg(resp);
+      if(live && live.availableFunctions) {
+        liveAgentStatusState = { functions: live.availableFunctions };
+        renderLiveAgentFunctions(live.availableFunctions);
+        renderLiveAgentSummary('Live agent responded using running backend functions.', 'success');
+      }
+    } catch (err) {
+      removeTyping();
+      const resp = appendCitationsToResponse(getBotResponse(text), text) + `\n\n**Live agent note**\n• backend call failed: ${err.message}\n• fallback response shown above`;
+      appendBotMsg(resp);
+    } finally {
+      if(sprite) sprite.className = 'mascot-sprite idle';
+    }
+  }
   // Hide suggestions after first message
   const sug = document.getElementById('chatSugs');
   if(sug) sug.style.display = 'none';
@@ -9428,11 +10152,32 @@ function initSetupPage() {
   document.getElementById('setupAutoGreet').checked = cfg.autoGreet !== false;
   document.getElementById('setupShowMascot').checked = cfg.showDashboardMascot !== false;
   document.getElementById('setupMascotMotion').checked = cfg.mascotMotion !== false;
+  const registration = (cfg && cfg.registration) || {};
+  document.getElementById('setupAllowSelfRegistration').checked = !!registration.allowSelfRegistration;
+  document.getElementById('setupAllowManagerSelfRegistration').checked = !!registration.allowManagerSelfRegistration;
+  document.getElementById('setupRegistrationDomains').value = Array.isArray(registration.allowedEmailDomains) ? registration.allowedEmailDomains.join(', ') : '';
   setupDocsDraft = Array.isArray(cfg.knowledgeFiles) ? cfg.knowledgeFiles.slice() : [];
   renderKnowledgeDocs('setupDocsList', setupDocsDraft);
+  initImageEditSettings();
+  initBotProtectionSettings();
   initMascotPreviews('setupMascotOpts');
   renderAccessControl();
+  loadMasterTenants();
   loadSsoSettings();
+  loadImageEditStatus();
+  loadLiveAgentStatus();
+}
+function initProfilePreferences() {
+  const cfg = getConfig();
+  const languageEl = document.getElementById('profileLanguage');
+  const autoGreetEl = document.getElementById('profileAutoGreet');
+  const showMascotEl = document.getElementById('profileShowMascot');
+  const motionEl = document.getElementById('profileMascotMotion');
+  if(languageEl) languageEl.value = cfg.language || 'en-IN';
+  if(autoGreetEl) autoGreetEl.checked = cfg.autoGreet !== false;
+  if(showMascotEl) showMascotEl.checked = cfg.showDashboardMascot !== false;
+  if(motionEl) motionEl.checked = cfg.mascotMotion !== false;
+  initMascotPreviews('profileMascotOpts');
 }
 function getSsoProviderDefaults(provider) {
   if(provider === 'microsoft') {
@@ -9472,6 +10217,224 @@ function renderSsoStatus(message, tone = 'info') {
     info: 'var(--sub)'
   };
   el.style.color = colors[tone] || colors.info;
+}
+function renderImageEditStatus(message, tone = 'info') {
+  const el = document.getElementById('setupImageEditStatus');
+  if(!el) return;
+  el.textContent = message || '';
+  const colors = {
+    success: 'var(--green)',
+    warn: 'var(--orange)',
+    error: 'var(--red)',
+    info: 'var(--sub)'
+  };
+  el.style.color = colors[tone] || colors.info;
+}
+function renderLiveAgentSummary(message, tone = 'info') {
+  const el = document.getElementById('liveAgentStatusSummary');
+  if(!el) return;
+  el.textContent = message || '';
+  const colors = {
+    success: 'var(--green)',
+    warn: 'var(--orange)',
+    error: 'var(--red)',
+    info: 'var(--sub)'
+  };
+  el.style.color = colors[tone] || colors.info;
+}
+function renderBotProtectionStatus(message, tone = 'info') {
+  const el = document.getElementById('botProtectionStatus');
+  if(!el) return;
+  el.textContent = message || '';
+  const colors = {
+    success: 'var(--green)',
+    warn: 'var(--orange)',
+    error: 'var(--red)',
+    info: 'var(--sub)'
+  };
+  el.style.color = colors[tone] || colors.info;
+}
+function renderLiveAgentFunctions(items) {
+  const el = document.getElementById('liveAgentFunctionList');
+  if(!el) return;
+  const list = Array.isArray(items) ? items : [];
+  if(!list.length) {
+    el.innerHTML = '<div class="card-desc">No live functions loaded yet.</div>';
+    return;
+  }
+  const tones = {
+    live: 'var(--green)',
+    restricted: 'var(--orange)',
+    needs_setup: 'var(--orange)',
+    disabled: 'var(--sub)'
+  };
+  el.innerHTML = list.map(item => `
+    <div style="padding:12px 14px;border:1px solid var(--b1);border-radius:var(--r12);background:var(--card2)">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="font:700 13px var(--font-ui);color:var(--white)">${escapeHtml(item.label || item.id || 'Live Function')}</div>
+        <div style="font:700 11px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:${tones[item.status] || 'var(--sub)'}">${escapeHtml(item.status || 'unknown')}</div>
+      </div>
+      <div style="font-size:12px;color:var(--text);margin-top:6px">${escapeHtml(item.description || '')}</div>
+      <div style="font-size:11px;color:var(--sub);margin-top:8px;word-break:break-word">${escapeHtml(JSON.stringify(item.meta || {}))}</div>
+    </div>
+  `).join('');
+}
+function getBotProtectionConfigLocal() {
+  const cfg = getConfig();
+  const raw = (cfg && cfg.botProtection) || {};
+  const scopes = raw && typeof raw.scopes === 'object' ? raw.scopes : {};
+  return {
+    requireApproval: raw.requireApproval !== false,
+    scopes: {
+      liveAgent: scopes.liveAgent !== false,
+      imageEdit: scopes.imageEdit !== false,
+      browserAgent: scopes.browserAgent !== false
+    }
+  };
+}
+function initBotProtectionSettings() {
+  const protection = getBotProtectionConfigLocal();
+  const requireEl = document.getElementById('setupBotApprovalRequired');
+  const liveEl = document.getElementById('setupBotApprovalLiveAgent');
+  const imageEl = document.getElementById('setupBotApprovalImageEdit');
+  const browserEl = document.getElementById('setupBotApprovalBrowserAgent');
+  if(requireEl) requireEl.checked = !!protection.requireApproval;
+  if(liveEl) liveEl.checked = !!protection.scopes.liveAgent;
+  if(imageEl) imageEl.checked = !!protection.scopes.imageEdit;
+  if(browserEl) browserEl.checked = !!protection.scopes.browserAgent;
+  renderBotProtectionStatus(
+    protection.requireApproval ? 'Approval gate is enabled for this workspace.' : 'Bots can run without approval in this workspace.',
+    protection.requireApproval ? 'success' : 'warn'
+  );
+}
+async function saveBotProtectionSettings() {
+  if(!requireRole(['admin','master'], 'Only admins can change bot protection.')) return;
+  const protection = {
+    requireApproval: !!((document.getElementById('setupBotApprovalRequired') || {}).checked),
+    scopes: {
+      liveAgent: !!((document.getElementById('setupBotApprovalLiveAgent') || {}).checked),
+      imageEdit: !!((document.getElementById('setupBotApprovalImageEdit') || {}).checked),
+      browserAgent: !!((document.getElementById('setupBotApprovalBrowserAgent') || {}).checked)
+    }
+  };
+  saveConfig({ botProtection: protection });
+  renderBotProtectionStatus(
+    protection.requireApproval ? 'Approval gate saved. Bots now need your approval before running.' : 'Approval gate is off. Bots can run without a confirmation step.',
+    protection.requireApproval ? 'success' : 'warn'
+  );
+  toast('🛡️ Bot protection saved', 'success');
+  if(hasBackendSession()) await loadLiveAgentStatus();
+}
+function buildBotApprovalPayload(scope) {
+  return {
+    confirmed: true,
+    scope,
+    approvedAt: Date.now(),
+    userId: currentUser && currentUser.id ? currentUser.id : ''
+  };
+}
+function requestBotApproval(scope, detail) {
+  const protection = getBotProtectionConfigLocal();
+  if(!protection.requireApproval || protection.scopes[scope] === false) return null;
+  const label = {
+    liveAgent: 'live agent',
+    imageEdit: 'image edit bot',
+    browserAgent: 'browser agent'
+  }[scope] || 'bot';
+  const approved = window.confirm('Approve this ' + label + ' action?\n\n' + (detail || 'Bloomie will use a protected bot feature for this request.'));
+  return approved ? buildBotApprovalPayload(scope) : false;
+}
+async function loadLiveAgentStatus(showToast = false) {
+  if(!hasBackendSession() || !currentUser) {
+    liveAgentStatusState = null;
+    renderLiveAgentSummary('Sign in through the backend to load live agent status.', 'info');
+    renderLiveAgentFunctions([]);
+    return;
+  }
+  try {
+    const data = await apiRequest('/api/ai/live-agent/status');
+    liveAgentStatusState = data || null;
+    if(data && data.protection) saveConfig({ botProtection: data.protection });
+    initBotProtectionSettings();
+    const functions = Array.isArray(data.functions) ? data.functions : [];
+    const liveCount = functions.filter(item => item.status === 'live').length;
+    const approvalNote = data && data.protection && data.protection.requireApproval ? ' Approval gate is on.' : '';
+    renderLiveAgentSummary('Live agent connected. ' + liveCount + ' live functions are ready in this workspace.' + approvalNote, liveCount ? 'success' : 'warn');
+    renderLiveAgentFunctions(functions);
+    if(showToast) toast('🤖 Live agent status refreshed', 'success');
+  } catch (err) {
+    renderLiveAgentSummary('Unable to load live agent status right now.', 'error');
+    renderLiveAgentFunctions([]);
+    if(showToast) toast('Live agent status failed: ' + err.message, 'warn');
+  }
+}
+function handleImageEditProviderChange() {
+  const provider = ((document.getElementById('setupImageEditProvider') || {}).value || 'disabled').trim();
+  const comfy = document.getElementById('setupComfyFields');
+  if(comfy) comfy.style.display = provider === 'comfyui' ? 'block' : 'none';
+}
+function initImageEditSettings() {
+  const cfg = getConfig();
+  const imageEdit = (cfg && cfg.imageEdit) || {};
+  const setVal = (id, value) => {
+    const el = document.getElementById(id);
+    if(el) el.value = value || '';
+  };
+  setVal('setupImageEditProvider', imageEdit.provider || 'disabled');
+  setVal('setupImageEditEndpoint', imageEdit.endpoint || '');
+  setVal('setupImageEditApiKey', imageEdit.apiKey || '');
+  setVal('setupImageEditModel', imageEdit.model || '');
+  setVal('setupImageEditWorkflow', imageEdit.workflowTemplate || '');
+  setVal('setupImageEditPromptNodeId', imageEdit.promptNodeId || '');
+  setVal('setupImageEditPromptInputName', imageEdit.promptInputName || 'text');
+  setVal('setupImageEditImageNodeId', imageEdit.imageNodeId || '');
+  setVal('setupImageEditImageInputName', imageEdit.imageInputName || 'image');
+  setVal('setupImageEditMaskNodeId', imageEdit.maskNodeId || '');
+  setVal('setupImageEditMaskInputName', imageEdit.maskInputName || 'image');
+  setVal('setupImageEditOutputNodeId', imageEdit.outputNodeId || '');
+  setVal('setupImageEditStrengthNodeId', imageEdit.strengthNodeId || '');
+  handleImageEditProviderChange();
+  if(!imageEditStatusState) renderImageEditStatus('Image editing is currently disabled.', 'info');
+}
+async function loadImageEditStatus(showToast = false) {
+  if(!hasBackendSession() || !currentUser) return;
+  try {
+    const data = await apiRequest('/api/ai/image-edit/status');
+    imageEditStatusState = data.status || null;
+    if(data && data.protection) saveConfig({ botProtection: data.protection });
+    initBotProtectionSettings();
+    const status = imageEditStatusState || {};
+    if(status.provider === 'disabled') renderImageEditStatus('Image editing is disabled for this workspace.', 'info');
+    else if(status.configured) renderImageEditStatus((status.provider || 'image-edit') + ' is connected and ready for chat edits.', 'success');
+    else renderImageEditStatus((status.provider || 'image-edit') + ' is selected but incomplete. Finish the provider settings before using chat edits.', 'warn');
+    if(showToast) toast(status.configured ? '✅ Image edit connection looks ready' : '⚠️ Image edit provider still needs setup', status.configured ? 'success' : 'warn');
+  } catch (err) {
+    renderImageEditStatus('Unable to verify image edit connectivity right now.', 'error');
+    if(showToast) toast('Image edit test failed: ' + err.message, 'warn');
+  }
+}
+async function saveImageEditSettings() {
+  if(!requireRole(['admin','master'], 'Only admins can configure image editing.')) return;
+  const imageEdit = {
+    provider: (document.getElementById('setupImageEditProvider').value || 'disabled').trim(),
+    endpoint: document.getElementById('setupImageEditEndpoint').value.trim(),
+    apiKey: document.getElementById('setupImageEditApiKey').value.trim(),
+    model: document.getElementById('setupImageEditModel').value.trim(),
+    workflowTemplate: document.getElementById('setupImageEditWorkflow').value.trim(),
+    promptNodeId: document.getElementById('setupImageEditPromptNodeId').value.trim(),
+    promptInputName: document.getElementById('setupImageEditPromptInputName').value.trim() || 'text',
+    imageNodeId: document.getElementById('setupImageEditImageNodeId').value.trim(),
+    imageInputName: document.getElementById('setupImageEditImageInputName').value.trim() || 'image',
+    maskNodeId: document.getElementById('setupImageEditMaskNodeId').value.trim(),
+    maskInputName: document.getElementById('setupImageEditMaskInputName').value.trim() || 'image',
+    outputNodeId: document.getElementById('setupImageEditOutputNodeId').value.trim(),
+    strengthNodeId: document.getElementById('setupImageEditStrengthNodeId').value.trim()
+  };
+  saveConfig({ imageEdit });
+  if(imageEdit.provider === 'disabled') renderImageEditStatus('Image editing is disabled for this workspace.', 'info');
+  else renderImageEditStatus('Image edit settings saved. Run a connection test to confirm the provider is reachable.', 'info');
+  toast('💾 Image edit settings saved', 'success');
+  if(hasBackendSession()) await loadImageEditStatus();
 }
 function handleSsoProviderChange() {
   const provider = getCurrentSsoProviderName();
@@ -9614,6 +10577,44 @@ function saveAISettings() {
   if(document.getElementById('page-chat') && !chatHistory.length) initChat();
   toast('💾 AI settings saved', 'success');
 }
+function saveRegistrationSettings() {
+  if(!requireRole(['admin','master'], 'Only admins can update registration policy.')) return;
+  const allowedEmailDomains = document.getElementById('setupRegistrationDomains').value
+    .split(',')
+    .map(item => item.trim().toLowerCase())
+    .filter(Boolean);
+  const invalidDomain = allowedEmailDomains.find(domain => !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(domain));
+  if(invalidDomain) {
+    toast('Invalid registration domain: ' + invalidDomain, 'warn');
+    return;
+  }
+  saveConfig({
+    registration: {
+      allowSelfRegistration: !!document.getElementById('setupAllowSelfRegistration').checked,
+      allowManagerSelfRegistration: !!document.getElementById('setupAllowManagerSelfRegistration').checked,
+      allowedEmailDomains
+    }
+  });
+  toast('🪪 Registration policy saved', 'success');
+}
+function savePersonalPreferences() {
+  const sel = document.querySelector('#profileMascotOpts .mascot-opt.selected');
+  const cfg = {
+    language: (document.getElementById('profileLanguage') || {}).value || 'en-IN',
+    autoGreet: !!((document.getElementById('profileAutoGreet') || {}).checked),
+    showDashboardMascot: !!((document.getElementById('profileShowMascot') || {}).checked),
+    mascotMotion: !!((document.getElementById('profileMascotMotion') || {}).checked)
+  };
+  if(sel) {
+    cfg.mascot = sel.dataset.mascot;
+    applyMascotType(sel.dataset.mascot);
+  }
+  saveConfig(cfg);
+  initMascot();
+  applyLanguageUI();
+  if(document.getElementById('page-chat') && !chatHistory.length) initChat();
+  toast('💾 Bloomie preferences saved', 'success');
+}
 function saveSLASettings() {
   saveConfig({
     slaCrit: parseInt(document.getElementById('slaCrit').value)||4,
@@ -9648,6 +10649,106 @@ function saveAdminSeatLimit() {
   renderAccessControl();
   toast('👑 Admin access limit saved', 'success');
 }
+let masterTenantCache = [];
+function renderMasterTenantStatus(message, tone) {
+  const el = document.getElementById('masterTenantStatus');
+  if(!el) return;
+  el.style.color = tone === 'error' ? 'var(--danger)' : tone === 'success' ? 'var(--green)' : 'var(--sub)';
+  el.textContent = message || '';
+}
+function renderMasterTenantList() {
+  const cont = document.getElementById('masterTenantList');
+  if(!cont) return;
+  if(!isMasterUser(currentUser)) {
+    cont.innerHTML = '<div class="card-desc">Master-only workspace setup.</div>';
+    return;
+  }
+  if(!masterTenantCache.length) {
+    cont.innerHTML = '<div class="card-desc">No client workspaces created yet.</div>';
+    return;
+  }
+  cont.innerHTML = masterTenantCache.map(item => {
+    const tenant = item.tenant || item;
+    const admin = item.seededAdmin || null;
+    const primaryDomain = tenant.primaryDomain || tenant.primary_domain || '';
+    return `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--b1);border-radius:var(--r12);background:var(--card2)">
+        <div>
+          <div style="font-size:13.5px;color:var(--white);font-family:var(--font-ui);font-weight:700">${escapeHtml(tenant.name || tenant.code)} <span class="badge badge-progress">${escapeHtml(tenant.code || '')}</span></div>
+          <div style="font-size:12px;color:var(--text);font-family:var(--font-ui);margin-top:2px">${escapeHtml(tenant.plan || 'enterprise')}${primaryDomain ? ' · ' + escapeHtml(primaryDomain) : ''}</div>
+          ${admin ? `<div style="font-size:12px;color:var(--sub);font-family:var(--font-ui);margin-top:4px">Seeded admin: ${escapeHtml(admin.empId || '')} · ${escapeHtml(admin.email || '')}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+async function loadMasterTenants(showToast) {
+  if(!isMasterUser(currentUser) || !hasBackendSession()) {
+    renderMasterTenantList();
+    return;
+  }
+  try {
+    const result = await apiRequest('/api/master/tenants');
+    masterTenantCache = (result.tenants || []).map(tenant => ({ tenant }));
+    renderMasterTenantList();
+    renderMasterTenantStatus('');
+    if(showToast) toast('🏢 Client workspaces refreshed', 'success');
+  } catch (err) {
+    renderMasterTenantStatus('Unable to load client workspaces right now.', 'error');
+  }
+}
+async function createMasterTenant() {
+  if(!isMasterUser(currentUser)) {
+    toast('Only Master Admin can create client workspaces.', 'warn');
+    return;
+  }
+  if(!hasBackendSession()) {
+    toast('Secure tenant setup requires a backend session.', 'warn');
+    return;
+  }
+  const payload = {
+    code: (document.getElementById('masterTenantCode').value || '').trim().toUpperCase(),
+    name: (document.getElementById('masterTenantName').value || '').trim(),
+    primaryDomain: (document.getElementById('masterTenantDomain').value || '').trim(),
+    plan: (document.getElementById('masterTenantPlan').value || 'enterprise').trim(),
+    adminName: (document.getElementById('masterTenantAdminName').value || '').trim(),
+    adminEmpId: (document.getElementById('masterTenantAdminEmpId').value || '').trim(),
+    adminEmail: (document.getElementById('masterTenantAdminEmail').value || '').trim().toLowerCase(),
+    adminPassword: (document.getElementById('masterTenantAdminPassword').value || '').trim()
+  };
+  if(!payload.code || !payload.name || !payload.adminName || !payload.adminEmpId || !payload.adminEmail || payload.adminPassword.length < 8) {
+    renderMasterTenantStatus('Client code, name, and seeded admin credentials are required.', 'error');
+    toast('Complete the client setup form before creating the workspace.', 'warn');
+    return;
+  }
+  const btn = document.getElementById('masterTenantCreateBtn');
+  if(btn) {
+    btn.disabled = true;
+    btn.textContent = 'Creating Demo Client…';
+  }
+  renderMasterTenantStatus('');
+  try {
+    const result = await apiRequest('/api/master/tenants', { method:'POST', body: payload });
+    masterTenantCache.unshift({ tenant: result.tenant, seededAdmin: result.admin });
+    renderMasterTenantList();
+    renderMasterTenantStatus('Created ' + payload.code + ' with seeded admin ' + payload.adminEmpId + '.', 'success');
+    ['masterTenantCode','masterTenantName','masterTenantDomain','masterTenantAdminName','masterTenantAdminEmpId','masterTenantAdminEmail','masterTenantAdminPassword'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.value = '';
+    });
+    const planEl = document.getElementById('masterTenantPlan');
+    if(planEl) planEl.value = 'enterprise';
+    toast('🏢 Demo client ' + payload.code + ' created', 'success');
+  } catch (err) {
+    renderMasterTenantStatus(err && err.message ? err.message : 'Client workspace creation failed.', 'error');
+    toast('Client workspace creation failed: ' + (err.message || 'Unknown error'), 'warn');
+  } finally {
+    if(btn) {
+      btn.disabled = false;
+      btn.textContent = 'Create Demo Client →';
+    }
+  }
+}
 function renderAccessControl() {
   const cont = document.getElementById('masterAccessList');
   if(!cont) return;
@@ -9680,15 +10781,15 @@ function renderAccessControl() {
         : '<span class="badge badge-resolved">Active</span>';
       const canPromote = role !== 'admin' && adminCount < limit;
       const roleAction = role === 'admin'
-        ? '<button class="btn btn-ghost btn-sm" onclick=\'setRegisteredUserRole(' + empIdArg + ',"user")\'>Revoke Admin</button>'
-        : '<button class="btn btn-secondary btn-sm" ' + (canPromote ? '' : 'disabled') + ' onclick=\'setRegisteredUserRole(' + empIdArg + ',"admin")\'>Assign Admin</button>';
+        ? '<button class="btn btn-ghost btn-sm" data-legacy-click=\'setRegisteredUserRole(' + empIdArg + ',"user")\'>Revoke Admin</button>'
+        : '<button class="btn btn-secondary btn-sm" ' + (canPromote ? '' : 'disabled') + ' data-legacy-click=\'setRegisteredUserRole(' + empIdArg + ',"admin")\'>Assign Admin</button>';
       const typeAction = userType === 'manager'
-        ? '<button class="btn btn-ghost btn-sm" onclick=\'setRegisteredUserType(' + empIdArg + ',"associate")\'>Make Associate</button>'
-        : '<button class="btn btn-secondary btn-sm" onclick=\'setRegisteredUserType(' + empIdArg + ',"manager")\'>Make Manager</button>';
+        ? '<button class="btn btn-ghost btn-sm" data-legacy-click=\'setRegisteredUserType(' + empIdArg + ',"associate")\'>Make Associate</button>'
+        : '<button class="btn btn-secondary btn-sm" data-legacy-click=\'setRegisteredUserType(' + empIdArg + ',"manager")\'>Make Manager</button>';
       const lifecycleAction = status === 'suspended'
-        ? '<button class="btn btn-secondary btn-sm" onclick=\'setRegisteredUserStatus(' + empIdArg + ',"active")\'>Reactivate</button>'
-        : '<button class="btn btn-ghost btn-sm" onclick=\'setRegisteredUserStatus(' + empIdArg + ',"suspended")\'>Suspend</button>';
-      const deleteAction = '<button class="btn btn-danger btn-sm" onclick=\'deleteRegisteredUser(' + empIdArg + ')\'>Delete</button>';
+        ? '<button class="btn btn-secondary btn-sm" data-legacy-click=\'setRegisteredUserStatus(' + empIdArg + ',"active")\'>Reactivate</button>'
+        : '<button class="btn btn-ghost btn-sm" data-legacy-click=\'setRegisteredUserStatus(' + empIdArg + ',"suspended")\'>Suspend</button>';
+      const deleteAction = '<button class="btn btn-danger btn-sm" data-legacy-click=\'deleteRegisteredUser(' + empIdArg + ')\'>Delete</button>';
       return `
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid var(--b1);border-radius:var(--r12);background:var(--card2)">
           <div>
@@ -10275,7 +11376,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     }
     const lm = document.getElementById('loginMascot');
     if(lm) {
-      lm.innerHTML = getMascotSVG(cfg.mascot||'bee', 160, 180);
+      lm.innerHTML = getMascotSVG(cfg.mascot||'owl', 160, 180);
       const svg = lm.querySelector('svg');
       if(svg) svg.style.animation = 'mascotFloat 3.5s ease-in-out infinite';
     }
@@ -10490,26 +11591,26 @@ function showPage(name, btn) {
 
 <!-- Accessibility panel -->
 <div id="a11yPanel">
-  <button class="a11y-toggle" onclick="toggleA11yMenu()" title="Accessibility options" aria-label="Accessibility options" aria-expanded="false" id="a11yToggle">
+  <button class="a11y-toggle" data-legacy-click="toggleA11yMenu()" title="Accessibility options" aria-label="Accessibility options" aria-expanded="false" id="a11yToggle">
     ♿
   </button>
   <div class="a11y-menu" id="a11yMenu" role="dialog" aria-label="Accessibility settings">
     <div class="a11y-title">Accessibility</div>
     <div class="a11y-row">
       <div><div class="a11y-row-label">🔊 Screen Reader</div><div class="a11y-row-desc">Announce navigation & actions</div></div>
-      <div class="a11y-switch" id="sw-reader" onclick="toggleA11y('reader',this)" role="switch" aria-checked="false" tabindex="0"></div>
+      <div class="a11y-switch" id="sw-reader" data-legacy-click="toggleA11y('reader',this)" role="switch" aria-checked="false" tabindex="0"></div>
     </div>
     <div class="a11y-row">
       <div><div class="a11y-row-label">🔆 High Contrast</div><div class="a11y-row-desc">Maximum text visibility</div></div>
-      <div class="a11y-switch" id="sw-contrast" onclick="toggleA11y('contrast',this)" role="switch" aria-checked="false" tabindex="0"></div>
+      <div class="a11y-switch" id="sw-contrast" data-legacy-click="toggleA11y('contrast',this)" role="switch" aria-checked="false" tabindex="0"></div>
     </div>
     <div class="a11y-row">
       <div><div class="a11y-row-label">🔠 Large Text</div><div class="a11y-row-desc">Increase all font sizes</div></div>
-      <div class="a11y-switch" id="sw-largetext" onclick="toggleA11y('largetext',this)" role="switch" aria-checked="false" tabindex="0"></div>
+      <div class="a11y-switch" id="sw-largetext" data-legacy-click="toggleA11y('largetext',this)" role="switch" aria-checked="false" tabindex="0"></div>
     </div>
     <div class="a11y-row">
       <div><div class="a11y-row-label">🐢 Reduce Motion</div><div class="a11y-row-desc">Disable animations</div></div>
-      <div class="a11y-switch" id="sw-motion" onclick="toggleA11y('motion',this)" role="switch" aria-checked="false" tabindex="0"></div>
+      <div class="a11y-switch" id="sw-motion" data-legacy-click="toggleA11y('motion',this)" role="switch" aria-checked="false" tabindex="0"></div>
     </div>
   </div>
 </div>
@@ -10538,11 +11639,21 @@ function showPage(name, btn) {
       <span class="vc-cmd">sign out</span>
     </div>
     <div class="vc-btn-row">
-      <button class="btn btn-primary" onclick="startVoiceListen()">🎤 Start Listening</button>
-      <button class="btn btn-ghost" onclick="closeVoiceCmds()">✕ Close</button>
+      <button class="btn btn-primary" data-legacy-click="startVoiceListen()">🎤 Start Listening</button>
+      <button class="btn btn-ghost" data-legacy-click="closeVoiceCmds()">✕ Close</button>
     </div>
   </div>
 </div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => {
+      console.warn('Service worker registration failed:', err && err.message ? err.message : err);
+    });
+  });
+}
+</script>
 
 </body>
 </html>

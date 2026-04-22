@@ -4,3 +4,12 @@ node_modules
 backend/data
 backend/logs
 backend/backups
+dist
+dist-app
+dist-mobile
+android
+ios
+app-assets/Bloomie.icns
+app-assets/Bloomie.iconset
+proof-*.png
+session.json

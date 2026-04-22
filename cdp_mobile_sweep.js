@@ -1,5 +1,6 @@
 const CDP_HTTP = process.env.CDP_HTTP || 'http://127.0.0.1:9222';
 const APP_URL = process.env.APP_URL || 'http://127.0.0.1:4181/';
+const MASTER_PASS = process.env.MASTER_PASS || 'Bloomie@9271#Master';
 
 async function httpJson(url, options = {}) {
   const res = await fetch(url, options);
@@ -30,6 +31,7 @@ class CdpClient {
     await new Promise((resolve, reject) => { this.ws.onopen = resolve; this.ws.onerror = reject; });
     await this.send('Runtime.enable');
     await this.send('Page.enable');
+    await this.send('Network.enable');
     await this.send('Emulation.setDeviceMetricsOverride', {
       width: 390,
       height: 844,
@@ -55,16 +57,45 @@ async function createTab(url) {
   return httpJson(`${CDP_HTTP}/json/new?${encodeURIComponent(url)}`, { method: 'PUT' });
 }
 
+async function waitFor(client, expression, { timeoutMs = 12000, intervalMs = 250 } = {}) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    const result = await client.eval(expression);
+    if (result) return result;
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+  throw new Error(`Timed out waiting for condition: ${expression}`);
+}
+
+async function resetBrowserState(client) {
+  await client.send('Network.clearBrowserCookies');
+  await client.send('Network.clearBrowserCache');
+  await client.send('Page.navigate', { url: APP_URL });
+  await waitFor(client, `document.readyState === 'complete'`);
+  await client.eval(`(() => {
+    try { localStorage.clear(); } catch {}
+    try { sessionStorage.clear(); } catch {}
+    return true;
+  })()`);
+}
+
 async function main() {
   const target = await createTab(APP_URL);
   const client = new CdpClient(target.webSocketDebuggerUrl);
   await client.connect();
+  await resetBrowserState(client);
+  await waitFor(client, `!!document.getElementById('loginTenantCode') && !!document.getElementById('loginUser') && !!document.getElementById('loginPass') && !!document.getElementById('loginBtn')`);
 
   const summary = {};
   summary.login = await client.eval(`(async()=>{
     window.__qaErrors=[]; window.addEventListener('error',e=>window.__qaErrors.push(String(e.message||e.error||'error')));
-    loginTenantCode.value='DEFAULT'; loginUser.value='master'; loginPass.value='Bloomie@9271#Master';
-    loginBtn.click(); await new Promise(r=>setTimeout(r,1800));
+    loginTenantCode.value='DEFAULT'; loginUser.value='master'; loginPass.value=${JSON.stringify(process.env.MASTER_PASS || 'Bloomie@9271#Master')};
+    loginBtn.click();
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < 8000) {
+      if (getComputedStyle(appShell).display !== 'none') break;
+      await new Promise(r=>setTimeout(r,250));
+    }
     return {
       ok:getComputedStyle(appShell).display!=='none',
       viewport:{w:window.innerWidth,h:window.innerHeight},
@@ -107,7 +138,17 @@ async function main() {
 
   const refreshBefore = await client.eval(`Array.from(document.querySelectorAll('.page.active')).map(n=>n.id)[0]||''`);
   await client.send('Page.reload', { ignoreCache: true });
-  await new Promise(r => setTimeout(r, 2500));
+  await waitFor(client, `document.readyState === 'complete'`);
+  await client.eval(`(async()=>{
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < 8000) {
+      const loginVisible = typeof loginScreen !== 'undefined' && getComputedStyle(loginScreen).display !== 'none';
+      const appVisible = typeof appShell !== 'undefined' && getComputedStyle(appShell).display !== 'none';
+      if (loginVisible || appVisible) break;
+      await new Promise(r => setTimeout(r, 250));
+    }
+    return true;
+  })()`);
   summary.refresh = await client.eval(`({
     before:${JSON.stringify('')},
     after:Array.from(document.querySelectorAll('.page.active')).map(n=>n.id)[0]||'',

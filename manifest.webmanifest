@@ -1,13 +1,41 @@
 {
-  "name": "Bloomie Helpdesk",
+  "id": "/",
+  "name": "Bloomie",
   "short_name": "Bloomie",
   "description": "Local-first HR helpdesk portal for tickets, knowledge, forum, and Bloomie assistance.",
-  "start_url": "./bloomie-helpdesk-v1.html",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#050508",
   "theme_color": "#050508",
   "orientation": "any",
   "lang": "en-IN",
   "categories": ["business", "productivity"],
-  "icons": []
+  "icons": [
+    {
+      "src": "/app-assets/bloomie-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/app-assets/bloomie-icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ask Bloomie",
+      "short_name": "Ask Bloomie",
+      "url": "/?appRoute=chat"
+    },
+    {
+      "name": "Raise Ticket",
+      "short_name": "Raise Ticket",
+      "url": "/?appRoute=raise"
+    }
+  ]
 }

@@ -9,6 +9,7 @@
 ## Environment
 Copy [.env.example](/Users/abhilashbisht/Desktop/Bloomie-Helpdesk/.env.example) to `.env` and set:
 - `BLOOMIE_BASE_URL`
+- `BLOOMIE_ALLOW_DEMO_DEFAULTS=false`
 - `BLOOMIE_SECRET`
 - `BLOOMIE_MASTER_PASS`
 
@@ -64,7 +65,8 @@ Callback routes:
 ## Final Recommendation
 Before public go-live:
 1. set real TLS domain and reverse proxy
-2. configure SSO client secrets in production
-3. test backup restore on a staging copy
-4. point Google Sheet sync to real shared sources
-5. review allowed email domains per tenant
+2. keep `BLOOMIE_ALLOW_DEMO_DEFAULTS=false` in production
+3. configure SSO client secrets in production
+4. test backup restore on a staging copy
+5. point Google Sheet sync to real shared sources
+6. review allowed email domains and registration policy per tenant

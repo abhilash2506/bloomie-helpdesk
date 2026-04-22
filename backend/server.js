@@ -5,16 +5,26 @@ const crypto = require('node:crypto');
 const { URL } = require('node:url');
 const { DatabaseSync } = require('node:sqlite');
 
-const ROOT = path.resolve(__dirname, '..');
-const DATA_DIR = path.join(__dirname, 'data');
+const ROOT = process.env.BLOOMIE_APP_ROOT
+  ? path.resolve(process.env.BLOOMIE_APP_ROOT)
+  : path.resolve(__dirname, '..');
+const DATA_DIR = process.env.BLOOMIE_DATA_DIR
+  ? path.resolve(process.env.BLOOMIE_DATA_DIR)
+  : path.join(__dirname, 'data');
 const DB_PATH = path.join(DATA_DIR, 'bloomie.sqlite');
-const LOG_DIR = path.join(__dirname, 'logs');
-const BACKUP_DIR = path.join(__dirname, 'backups');
+const LOG_DIR = process.env.BLOOMIE_LOG_DIR
+  ? path.resolve(process.env.BLOOMIE_LOG_DIR)
+  : path.join(__dirname, 'logs');
+const BACKUP_DIR = process.env.BLOOMIE_BACKUP_DIR
+  ? path.resolve(process.env.BLOOMIE_BACKUP_DIR)
+  : path.join(__dirname, 'backups');
 const HOST = process.env.BLOOMIE_HOST || process.env.HOST || '0.0.0.0';
 const PORT = Number(process.env.BLOOMIE_PORT || process.env.PORT || 4180);
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const ALLOW_DEMO_DEFAULTS = process.env.BLOOMIE_ALLOW_DEMO_DEFAULTS === 'true';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
-const HMAC_SECRET = process.env.BLOOMIE_SECRET || 'bloomie-local-secret-change-me';
-const DEFAULT_MASTER_PASS = process.env.BLOOMIE_MASTER_PASS || 'Bloomie@9271#Master';
+const HMAC_SECRET = process.env.BLOOMIE_SECRET || (ALLOW_DEMO_DEFAULTS ? 'bloomie-local-secret-change-me' : crypto.randomBytes(32).toString('hex'));
+const DEFAULT_MASTER_PASS = process.env.BLOOMIE_MASTER_PASS || (ALLOW_DEMO_DEFAULTS ? 'Bloomie@9271#Master' : `ChangeMe-${crypto.randomBytes(12).toString('hex')}`);
 const APP_BASE_URL = process.env.BLOOMIE_BASE_URL || `http://${HOST}:${PORT}`;
 const AUTH_RATE_LIMIT_MAX = Number(process.env.BLOOMIE_AUTH_RATE_LIMIT_MAX || 30);
 const AUTH_RATE_LIMIT_WINDOW_MS = Number(process.env.BLOOMIE_AUTH_RATE_LIMIT_WINDOW_MS || 5 * 60 * 1000);
@@ -22,6 +32,8 @@ const API_RATE_LIMIT_MAX = Number(process.env.BLOOMIE_API_RATE_LIMIT_MAX || 300)
 const API_RATE_LIMIT_WINDOW_MS = Number(process.env.BLOOMIE_API_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
 const SHEET_SYNC_INTERVAL_MS = Number(process.env.BLOOMIE_SYNC_INTERVAL_MS || 15 * 60 * 1000);
 const BACKUP_INTERVAL_MS = Number(process.env.BLOOMIE_BACKUP_INTERVAL_MS || 6 * 60 * 60 * 1000);
+const HOUSEKEEPING_INTERVAL_MS = Number(process.env.BLOOMIE_HOUSEKEEPING_INTERVAL_MS || 10 * 60 * 1000);
+const IMAGE_EDIT_TIMEOUT_MS = Number(process.env.BLOOMIE_IMAGE_EDIT_TIMEOUT_MS || 2 * 60 * 1000);
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 fs.mkdirSync(LOG_DIR, { recursive: true });
@@ -56,6 +68,20 @@ function recordError(err, context = 'runtime') {
   metrics.errors += 1;
   metrics.lastError = { time: nowIso(), context, message: err && err.message ? err.message : String(err) };
   appendLog('error.log', `[${context}] ${metrics.lastError.message}`);
+}
+
+function hasInsecureDefaults() {
+  return ALLOW_DEMO_DEFAULTS && (HMAC_SECRET === 'bloomie-local-secret-change-me' || DEFAULT_MASTER_PASS === 'Bloomie@9271#Master');
+}
+
+function validateRuntimeConfig() {
+  if (!hasInsecureDefaults()) return;
+  const message = 'Bloomie is using demo default security secrets. Set BLOOMIE_SECRET and BLOOMIE_MASTER_PASS, and disable BLOOMIE_ALLOW_DEMO_DEFAULTS before public deployment.';
+  if (IS_PRODUCTION) {
+    throw new Error(message);
+  }
+  appendLog('app.log', `[startup-warning] ${message}`);
+  console.warn(message);
 }
 
 function hashText(value) {
@@ -173,12 +199,12 @@ function checkRateLimit(req, res, bucket, max, windowMs) {
   return true;
 }
 
-function readBody(req) {
+function readBody(req, maxBytes = 2 * 1024 * 1024) {
   return new Promise((resolve, reject) => {
     let data = '';
     req.on('data', chunk => {
       data += chunk;
-      if (data.length > 2 * 1024 * 1024) {
+      if (data.length > maxBytes) {
         reject(new Error('Payload too large'));
         req.destroy();
       }
@@ -188,6 +214,14 @@ function readBody(req) {
   });
 }
 
+function buildCsp({ scriptNonce, allowInlineScripts = false } = {}) {
+  const scriptSrc = allowInlineScripts
+    ? "script-src 'self' 'unsafe-inline'"
+    : `script-src 'self' 'nonce-${scriptNonce}'`;
+  const scriptAttr = allowInlineScripts ? '' : "; script-src-attr 'none'";
+  return `default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; ${scriptSrc}${scriptAttr}; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; media-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`;
+}
+
 function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
@@ -195,8 +229,12 @@ function sendJson(res, statusCode, payload) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'no-referrer',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    'Origin-Agent-Cluster': '?1',
+    'X-Permitted-Cross-Domain-Policies': 'none',
     'Permissions-Policy': 'microphone=(), camera=(), geolocation=()',
-    'Content-Security-Policy': "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    'Content-Security-Policy': buildCsp({ allowInlineScripts: true })
   });
   res.end(JSON.stringify(payload));
 }
@@ -207,10 +245,367 @@ function sendText(res, statusCode, text, type = 'text/plain; charset=utf-8') {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'no-referrer',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    'Origin-Agent-Cluster': '?1',
+    'X-Permitted-Cross-Domain-Policies': 'none',
     'Permissions-Policy': 'microphone=(), camera=(), geolocation=()',
-    'Content-Security-Policy': "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    'Content-Security-Policy': buildCsp({ allowInlineScripts: true })
   });
   res.end(text);
+}
+
+function parseCookies(req) {
+  const raw = String(req.headers.cookie || '');
+  const out = {};
+  raw.split(';').forEach(part => {
+    const idx = part.indexOf('=');
+    if (idx <= 0) return;
+    const key = part.slice(0, idx).trim();
+    const value = part.slice(idx + 1).trim();
+    if (!key) return;
+    try {
+      out[key] = decodeURIComponent(value);
+    } catch {
+      out[key] = value;
+    }
+  });
+  return out;
+}
+
+function getSessionCookieName() {
+  return 'bloomie_session';
+}
+
+function buildSessionCookie(token, expiresAt) {
+  const segments = [
+    `${getSessionCookieName()}=${encodeURIComponent(token)}`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax'
+  ];
+  if (APP_BASE_URL.startsWith('https://')) segments.push('Secure');
+  if (Number.isFinite(expiresAt)) segments.push(`Expires=${new Date(expiresAt).toUTCString()}`);
+  return segments.join('; ');
+}
+
+function clearSessionCookieHeader() {
+  const segments = [
+    `${getSessionCookieName()}=`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+    'Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+    'Max-Age=0'
+  ];
+  if (APP_BASE_URL.startsWith('https://')) segments.push('Secure');
+  return segments.join('; ');
+}
+
+function decodeDataUrl(dataUrl) {
+  const match = String(dataUrl || '').match(/^data:([^;]+);base64,(.+)$/);
+  if (!match) throw new Error('Invalid image payload');
+  return {
+    mimeType: match[1],
+    buffer: Buffer.from(match[2], 'base64')
+  };
+}
+
+function buildDataUrl(buffer, mimeType = 'image/png') {
+  return `data:${mimeType};base64,${Buffer.from(buffer).toString('base64')}`;
+}
+
+function extFromMime(mimeType = '') {
+  const normalized = String(mimeType || '').toLowerCase();
+  if (normalized === 'image/jpeg') return 'jpg';
+  if (normalized === 'image/webp') return 'webp';
+  return 'png';
+}
+
+function normalizeImageEditProvider(value) {
+  const normalized = cleanText(value, 40).toLowerCase();
+  return ['disabled', 'comfyui', 'stability', 'custom'].includes(normalized) ? normalized : 'disabled';
+}
+
+function getImageEditConfig(tenantId) {
+  const raw = getTenantConfig(tenantId).imageEdit || {};
+  return {
+    provider: normalizeImageEditProvider(raw.provider || process.env.BLOOMIE_IMAGE_EDIT_PROVIDER || 'disabled'),
+    endpoint: cleanText(raw.endpoint || process.env.BLOOMIE_IMAGE_EDIT_ENDPOINT || '', 500),
+    apiKey: cleanText(raw.apiKey || process.env.BLOOMIE_IMAGE_EDIT_API_KEY || '', 500),
+    model: cleanText(raw.model || process.env.BLOOMIE_IMAGE_EDIT_MODEL || '', 120),
+    workflowTemplate: typeof raw.workflowTemplate === 'string' ? raw.workflowTemplate : String(process.env.BLOOMIE_IMAGE_EDIT_WORKFLOW || ''),
+    promptNodeId: cleanText(raw.promptNodeId || process.env.BLOOMIE_IMAGE_EDIT_PROMPT_NODE || '', 60),
+    promptInputName: cleanText(raw.promptInputName || process.env.BLOOMIE_IMAGE_EDIT_PROMPT_INPUT || 'text', 60) || 'text',
+    imageNodeId: cleanText(raw.imageNodeId || process.env.BLOOMIE_IMAGE_EDIT_IMAGE_NODE || '', 60),
+    imageInputName: cleanText(raw.imageInputName || process.env.BLOOMIE_IMAGE_EDIT_IMAGE_INPUT || 'image', 60) || 'image',
+    maskNodeId: cleanText(raw.maskNodeId || process.env.BLOOMIE_IMAGE_EDIT_MASK_NODE || '', 60),
+    maskInputName: cleanText(raw.maskInputName || process.env.BLOOMIE_IMAGE_EDIT_MASK_INPUT || 'image', 60) || 'image',
+    outputNodeId: cleanText(raw.outputNodeId || process.env.BLOOMIE_IMAGE_EDIT_OUTPUT_NODE || '', 60),
+    strengthNodeId: cleanText(raw.strengthNodeId || process.env.BLOOMIE_IMAGE_EDIT_STRENGTH_NODE || '', 60),
+    strengthInputName: cleanText(raw.strengthInputName || process.env.BLOOMIE_IMAGE_EDIT_STRENGTH_INPUT || 'denoise', 60) || 'denoise',
+    pollIntervalMs: Math.max(500, Number(raw.pollIntervalMs || process.env.BLOOMIE_IMAGE_EDIT_POLL_MS || 1200)),
+    timeoutMs: Math.max(15000, Number(raw.timeoutMs || process.env.BLOOMIE_IMAGE_EDIT_TIMEOUT_MS || IMAGE_EDIT_TIMEOUT_MS))
+  };
+}
+
+function getBotProtectionConfig(tenantId) {
+  const raw = getTenantConfig(tenantId).botProtection || {};
+  const scopes = raw && typeof raw.scopes === 'object' ? raw.scopes : {};
+  return {
+    requireApproval: raw.requireApproval !== false,
+    scopes: {
+      liveAgent: scopes.liveAgent !== false,
+      imageEdit: scopes.imageEdit !== false,
+      browserAgent: scopes.browserAgent !== false
+    }
+  };
+}
+
+function getPublicBotProtectionConfig(tenantId) {
+  const config = getBotProtectionConfig(tenantId);
+  return {
+    requireApproval: !!config.requireApproval,
+    scopes: { ...config.scopes }
+  };
+}
+
+function requiresBotApproval(tenantId, scope) {
+  const config = getBotProtectionConfig(tenantId);
+  return !!(config.requireApproval && config.scopes[scope] !== false);
+}
+
+function requireBotApproval(res, tenantId, scope, body, auth) {
+  if (!requiresBotApproval(tenantId, scope)) return true;
+  const approval = body && typeof body.approval === 'object' ? body.approval : {};
+  const approvedAt = Number(approval.approvedAt || 0);
+  const isFresh = approvedAt > 0 && Math.abs(Date.now() - approvedAt) <= 5 * 60 * 1000;
+  const approved = approval.confirmed === true
+    && approval.scope === scope
+    && approval.userId === auth.user.id
+    && isFresh;
+  if (approved) return true;
+  sendJson(res, 403, {
+    error: 'Approval required before this bot can run',
+    code: 'BOT_APPROVAL_REQUIRED',
+    protection: getPublicBotProtectionConfig(tenantId),
+    scope
+  });
+  return false;
+}
+
+function getPublicImageEditStatus(config) {
+  const provider = normalizeImageEditProvider(config.provider);
+  const hasWorkflow = !!String(config.workflowTemplate || '').trim();
+  return {
+    provider,
+    configured: provider !== 'disabled' && (
+      provider === 'stability'
+        ? !!(config.apiKey && (config.endpoint || config.model))
+        : provider === 'comfyui'
+          ? !!(config.endpoint && hasWorkflow && config.imageNodeId && config.promptNodeId)
+          : !!config.endpoint
+    ),
+    endpoint: config.endpoint,
+    model: config.model,
+    hasApiKey: !!config.apiKey,
+    hasWorkflow
+  };
+}
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = IMAGE_EDIT_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(new Error('Timed out')), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function readJsonResponse(response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) return response.json();
+  const text = await response.text();
+  return parseJsonSafe(text, { error: text || `HTTP ${response.status}` });
+}
+
+function buildImageEditPrompt(body) {
+  const prompt = cleanText(body.prompt, 4000);
+  const operation = cleanText(body.operation, 80).toLowerCase();
+  const target = cleanText(body.target, 240);
+  if (!prompt) throw new Error('Prompt is required for image editing');
+  if (operation === 'background-swap') {
+    return `${prompt}\nKeep the subject identity, pose, and wardrobe intact while replacing only the background.${target ? ` Focus on this requested background: ${target}.` : ''}`;
+  }
+  if (operation === 'object-removal') {
+    return `${prompt}\nRemove the unwanted object cleanly, reconstruct the scene naturally, and keep lighting and perspective consistent.${target ? ` Remove this element: ${target}.` : ''}`;
+  }
+  if (operation === 'campaign-transform') {
+    return `${prompt}\nTransform this into a polished campaign visual while preserving the main subject and photorealistic detail.`;
+  }
+  return prompt;
+}
+
+async function invokeCustomImageEditor(config, request) {
+  if (!config.endpoint) throw new Error('Custom image editor endpoint is missing');
+  const response = await fetchWithTimeout(config.endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {})
+    },
+    body: JSON.stringify(request)
+  }, config.timeoutMs);
+  const body = await readJsonResponse(response);
+  if (!response.ok) throw new Error(body.error || body.detail || `Custom image editor failed with ${response.status}`);
+  if (!body.imageDataUrl) throw new Error('Custom image editor did not return imageDataUrl');
+  return {
+    imageDataUrl: body.imageDataUrl,
+    revisedPrompt: body.revisedPrompt || request.prompt,
+    provider: 'custom'
+  };
+}
+
+async function invokeStabilityImageEditor(config, request) {
+  if (!config.apiKey) throw new Error('Stability API key is missing');
+  const source = decodeDataUrl(request.imageDataUrl);
+  const form = new FormData();
+  form.append('init_image', new Blob([source.buffer], { type: source.mimeType }), `input.${extFromMime(source.mimeType)}`);
+  form.append('init_image_mode', 'IMAGE_STRENGTH');
+  form.append('image_strength', String(request.strength));
+  form.append('text_prompts[0][text]', request.prompt);
+  form.append('text_prompts[0][weight]', '1');
+  form.append('cfg_scale', '7');
+  form.append('samples', '1');
+  form.append('steps', '30');
+  if (request.maskDataUrl) {
+    const mask = decodeDataUrl(request.maskDataUrl);
+    form.append('mask_image', new Blob([mask.buffer], { type: mask.mimeType }), `mask.${extFromMime(mask.mimeType)}`);
+  }
+  const endpoint = config.endpoint || `https://api.stability.ai/v1/generation/${encodeURIComponent(config.model || 'stable-diffusion-xl-1024-v1-0')}/image-to-image`;
+  const response = await fetchWithTimeout(endpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${config.apiKey}`,
+      Accept: 'application/json'
+    },
+    body: form
+  }, config.timeoutMs);
+  const body = await readJsonResponse(response);
+  if (!response.ok) throw new Error(body.error || body.message || `Stability request failed with ${response.status}`);
+  const artifact = Array.isArray(body.artifacts) ? body.artifacts.find(item => (item.finishReason || item.finish_reason || 'SUCCESS') === 'SUCCESS' && item.base64) : null;
+  if (!artifact) throw new Error('Stability did not return a successful edited image');
+  return {
+    imageDataUrl: `data:image/png;base64,${artifact.base64}`,
+    revisedPrompt: request.prompt,
+    provider: 'stability'
+  };
+}
+
+async function uploadComfyUIImage(config, buffer, mimeType, baseName) {
+  const form = new FormData();
+  form.append('image', new Blob([buffer], { type: mimeType }), `${baseName}.${extFromMime(mimeType)}`);
+  form.append('type', 'input');
+  const response = await fetchWithTimeout(`${config.endpoint.replace(/\/$/, '')}/upload/image`, {
+    method: 'POST',
+    body: form
+  }, config.timeoutMs);
+  const body = await readJsonResponse(response);
+  if (!response.ok) throw new Error(body.error || `ComfyUI image upload failed with ${response.status}`);
+  if (!body.name) throw new Error('ComfyUI upload did not return a file name');
+  return body;
+}
+
+function mutateWorkflowNode(workflow, nodeId, inputName, value) {
+  if (!nodeId) return;
+  const node = workflow[nodeId];
+  if (!node || !node.inputs) throw new Error(`ComfyUI workflow node "${nodeId}" is missing`);
+  node.inputs[inputName] = value;
+}
+
+function findComfyOutputImage(history, preferredNodeId) {
+  const outputs = history && history.outputs ? history.outputs : {};
+  if (preferredNodeId && outputs[preferredNodeId] && Array.isArray(outputs[preferredNodeId].images) && outputs[preferredNodeId].images.length) {
+    return outputs[preferredNodeId].images[0];
+  }
+  for (const value of Object.values(outputs)) {
+    if (value && Array.isArray(value.images) && value.images.length) return value.images[0];
+  }
+  return null;
+}
+
+async function invokeComfyUIImageEditor(config, request) {
+  if (!config.endpoint) throw new Error('ComfyUI endpoint is missing');
+  if (!String(config.workflowTemplate || '').trim()) throw new Error('ComfyUI workflow JSON is missing');
+  const workflow = parseJsonSafe(config.workflowTemplate, null);
+  if (!workflow || typeof workflow !== 'object') throw new Error('ComfyUI workflow JSON is invalid');
+  const source = decodeDataUrl(request.imageDataUrl);
+  const uploaded = await uploadComfyUIImage(config, source.buffer, source.mimeType, `bloomie-input-${Date.now()}`);
+  mutateWorkflowNode(workflow, config.imageNodeId, config.imageInputName, uploaded.name);
+  mutateWorkflowNode(workflow, config.promptNodeId, config.promptInputName, request.prompt);
+  if (config.strengthNodeId) mutateWorkflowNode(workflow, config.strengthNodeId, config.strengthInputName, request.strength);
+  if (request.maskDataUrl && config.maskNodeId) {
+    const mask = decodeDataUrl(request.maskDataUrl);
+    const uploadedMask = await uploadComfyUIImage(config, mask.buffer, mask.mimeType, `bloomie-mask-${Date.now()}`);
+    mutateWorkflowNode(workflow, config.maskNodeId, config.maskInputName, uploadedMask.name);
+  }
+  const promptResponse = await fetchWithTimeout(`${config.endpoint.replace(/\/$/, '')}/prompt`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      client_id: `bloomie-${Date.now()}`,
+      prompt: workflow
+    })
+  }, config.timeoutMs);
+  const promptBody = await readJsonResponse(promptResponse);
+  if (!promptResponse.ok) throw new Error(promptBody.error || `ComfyUI prompt queue failed with ${promptResponse.status}`);
+  if (!promptBody.prompt_id) throw new Error('ComfyUI did not return prompt_id');
+  const startedAt = Date.now();
+  let outputImage = null;
+  while (Date.now() - startedAt < config.timeoutMs) {
+    const historyResponse = await fetchWithTimeout(`${config.endpoint.replace(/\/$/, '')}/history/${encodeURIComponent(promptBody.prompt_id)}`, {}, config.timeoutMs);
+    const historyBody = await readJsonResponse(historyResponse);
+    const history = historyBody && historyBody[promptBody.prompt_id];
+    outputImage = findComfyOutputImage(history, config.outputNodeId);
+    if (outputImage) break;
+    await new Promise(resolve => setTimeout(resolve, config.pollIntervalMs));
+  }
+  if (!outputImage) throw new Error('ComfyUI edit timed out before an output image was produced');
+  const params = new URLSearchParams({
+    filename: outputImage.filename,
+    subfolder: outputImage.subfolder || '',
+    type: outputImage.type || 'output'
+  });
+  const imageResponse = await fetchWithTimeout(`${config.endpoint.replace(/\/$/, '')}/view?${params.toString()}`, {}, config.timeoutMs);
+  if (!imageResponse.ok) throw new Error(`ComfyUI image fetch failed with ${imageResponse.status}`);
+  const mimeType = imageResponse.headers.get('content-type') || 'image/png';
+  const arrayBuffer = await imageResponse.arrayBuffer();
+  return {
+    imageDataUrl: buildDataUrl(Buffer.from(arrayBuffer), mimeType),
+    revisedPrompt: request.prompt,
+    provider: 'comfyui'
+  };
+}
+
+async function runImageEdit(tenantId, body) {
+  const config = getImageEditConfig(tenantId);
+  const status = getPublicImageEditStatus(config);
+  if (!status.configured) throw new Error('Image editing is not configured for this workspace');
+  const request = {
+    prompt: buildImageEditPrompt(body),
+    originalPrompt: cleanText(body.prompt, 4000),
+    operation: cleanText(body.operation, 80).toLowerCase(),
+    target: cleanText(body.target, 240),
+    imageDataUrl: cleanText(body.imageDataUrl, 15 * 1024 * 1024),
+    maskDataUrl: cleanText(body.maskDataUrl, 15 * 1024 * 1024),
+    strength: Math.max(0.05, Math.min(0.95, Number(body.strength || 0.35)))
+  };
+  if (!request.imageDataUrl.startsWith('data:image/')) throw new Error('A valid source image is required');
+  if (config.provider === 'stability') return invokeStabilityImageEditor(config, request);
+  if (config.provider === 'comfyui') return invokeComfyUIImageEditor(config, request);
+  if (config.provider === 'custom') return invokeCustomImageEditor(config, request);
+  throw new Error('Unsupported image editing provider');
 }
 
 function contentTypeFor(filePath) {
@@ -239,13 +634,36 @@ function serveStatic(req, res, pathname) {
     sendText(res, 404, 'Not Found');
     return;
   }
+  if (path.extname(filePath).toLowerCase() === '.html') {
+    const nonce = crypto.randomBytes(16).toString('base64');
+    const html = fs.readFileSync(filePath, 'utf8')
+      .replace(/<script(\s|>)/gi, `<script nonce="${nonce}"$1`);
+    res.writeHead(200, {
+      'Content-Type': contentTypeFor(filePath),
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'Referrer-Policy': 'no-referrer',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Resource-Policy': 'same-origin',
+      'Origin-Agent-Cluster': '?1',
+      'X-Permitted-Cross-Domain-Policies': 'none',
+      'Permissions-Policy': 'microphone=(), camera=(), geolocation=()',
+      'Content-Security-Policy': buildCsp({ scriptNonce: nonce })
+    });
+    res.end(html);
+    return;
+  }
   res.writeHead(200, {
     'Content-Type': contentTypeFor(filePath),
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'no-referrer',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    'Origin-Agent-Cluster': '?1',
+    'X-Permitted-Cross-Domain-Policies': 'none',
     'Permissions-Policy': 'microphone=(), camera=(), geolocation=()',
-    'Content-Security-Policy': "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    'Content-Security-Policy': buildCsp({ allowInlineScripts: true })
   });
   fs.createReadStream(filePath).pipe(res);
 }
@@ -253,6 +671,7 @@ function serveStatic(req, res, pathname) {
 function initDb() {
   db.exec(`
     PRAGMA journal_mode = WAL;
+    PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS tenants (
       id TEXT PRIMARY KEY,
       tenant_code TEXT UNIQUE NOT NULL,
@@ -380,6 +799,11 @@ function initDb() {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
+    CREATE INDEX IF NOT EXISTS idx_sessions_user_expires ON sessions (user_id, expires_at);
+    CREATE INDEX IF NOT EXISTS idx_sessions_tenant_expires ON sessions (tenant_id, expires_at);
+    CREATE INDEX IF NOT EXISTS idx_tickets_tenant_created ON tickets (tenant_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_notifications_tenant_user_created ON notifications (tenant_id, user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_disciplinary_actions_tenant_target ON disciplinary_actions (tenant_id, target_user_id, created_at DESC);
   `);
   runMigrations();
   seedDefaultTenant();
@@ -395,12 +819,58 @@ function ensureColumn(tableName, columnName, columnSql) {
 function runMigrations() {
   ensureColumn('sso_providers', 'client_secret', 'client_secret TEXT');
   ensureColumn('users', 'user_type', "user_type TEXT NOT NULL DEFAULT 'associate'");
+  sanitizePlaceholderTenantConfigs();
+  sanitizePlaceholderSsoProviders();
+}
+
+function sanitizePlaceholderTenantConfigs() {
+  const tenantRows = db.prepare('SELECT id, config_json FROM tenants').all();
+  for (const row of tenantRows) {
+    const current = normalizeTenantConfig(parseJsonSafe(row.config_json, {}));
+    if (!current || typeof current !== 'object') continue;
+    if (current.setupCompleted) continue;
+
+    let changed = false;
+    const next = { ...current };
+    if (next.policyUrl === 'https://example.com/policy.pdf') {
+      next.policyUrl = '';
+      changed = true;
+    }
+    if (typeof next.sheetUrl === 'string' && /\/sample-sheet\.csv$/i.test(next.sheetUrl)) {
+      next.sheetUrl = '';
+      changed = true;
+    }
+    if (changed && next.setupPromptDismissedAt) {
+      next.setupPromptDismissedAt = '';
+    }
+    if (!changed) continue;
+
+    db.prepare('UPDATE tenants SET config_json = ?, updated_at = ? WHERE id = ?').run(
+      json(normalizeTenantConfig(next)),
+      nowIso(),
+      row.id
+    );
+  }
+}
+
+function sanitizePlaceholderSsoProviders() {
+  const rows = db.prepare('SELECT * FROM sso_providers').all();
+  for (const row of rows) {
+    if (!row.enabled) continue;
+    if (isSsoProviderConfigured(row)) continue;
+    if (!looksLikePlaceholderSecret(row.client_id) && !looksLikePlaceholderSecret(row.client_secret)) continue;
+    db.prepare(`
+      UPDATE sso_providers
+      SET enabled = 0, client_id = '', client_secret = '', updated_at = ?
+      WHERE id = ?
+    `).run(nowIso(), row.id);
+  }
 }
 
 function seedDefaultTenant() {
   const tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get('tenant_default');
   if (!tenant) {
-    const cfg = {
+    const cfg = normalizeTenantConfig({
       orgName: '',
       hrEmail: '',
       portalUrl: '',
@@ -408,8 +878,18 @@ function seedDefaultTenant() {
       language: 'en-IN',
       hrmsType: '',
       setupCompleted: false,
-      tenantBranding: { logoText: 'Bloomie', accentColor: '#FFD101' }
-    };
+      tenantBranding: { logoText: 'Bloomie', accentColor: '#FFD101' },
+      imageEdit: { provider: 'disabled' },
+      registration: {
+        allowSelfRegistration: !IS_PRODUCTION,
+        allowManagerSelfRegistration: !IS_PRODUCTION,
+        allowedEmailDomains: []
+      },
+      botProtection: {
+        requireApproval: true,
+        scopes: { liveAgent: true, imageEdit: true, browserAgent: true }
+      }
+    });
     const securityCfg = {
       dataResidency: 'IN',
       encryptionPolicy: 'AES-256 at rest planned, TLS in deployment',
@@ -520,6 +1000,83 @@ function getTenantConfig(tenantId) {
   return row ? parseJsonSafe(row.config_json, {}) : {};
 }
 
+function normalizeEmailDomain(value) {
+  return cleanText(value, 120).toLowerCase().replace(/^\.+/, '').replace(/\.+$/, '');
+}
+
+function normalizeEmailDomainList(values) {
+  if (!Array.isArray(values)) return [];
+  return Array.from(new Set(values.map(normalizeEmailDomain).filter(Boolean)));
+}
+
+function normalizeRegistrationConfig(raw = {}, defaults = {}) {
+  const source = raw && typeof raw === 'object' ? raw : {};
+  const fallback = defaults && typeof defaults === 'object' ? defaults : {};
+  return {
+    allowSelfRegistration: source.allowSelfRegistration !== undefined
+      ? !!source.allowSelfRegistration
+      : fallback.allowSelfRegistration !== undefined
+        ? !!fallback.allowSelfRegistration
+        : false,
+    allowManagerSelfRegistration: source.allowManagerSelfRegistration !== undefined
+      ? !!source.allowManagerSelfRegistration
+      : fallback.allowManagerSelfRegistration !== undefined
+        ? !!fallback.allowManagerSelfRegistration
+        : false,
+    allowedEmailDomains: normalizeEmailDomainList(
+      source.allowedEmailDomains || source.allowedDomains || fallback.allowedEmailDomains || []
+    )
+  };
+}
+
+function normalizeTenantConfig(config = {}) {
+  const next = { ...(config || {}) };
+  next.registration = normalizeRegistrationConfig(next.registration, {
+    allowSelfRegistration: typeof next.allowSelfRegistration === 'boolean' ? next.allowSelfRegistration : undefined,
+    allowManagerSelfRegistration: typeof next.allowManagerSelfRegistration === 'boolean' ? next.allowManagerSelfRegistration : undefined,
+    allowedEmailDomains: next.allowedEmailDomains
+  });
+  delete next.allowSelfRegistration;
+  delete next.allowManagerSelfRegistration;
+  delete next.allowedEmailDomains;
+  return next;
+}
+
+function getRegistrationPolicy(tenantId) {
+  const cfg = getTenantConfig(tenantId);
+  return normalizeRegistrationConfig(cfg.registration, {
+    allowSelfRegistration: typeof cfg.allowSelfRegistration === 'boolean' ? cfg.allowSelfRegistration : undefined,
+    allowManagerSelfRegistration: typeof cfg.allowManagerSelfRegistration === 'boolean' ? cfg.allowManagerSelfRegistration : undefined,
+    allowedEmailDomains: cfg.allowedEmailDomains
+  });
+}
+
+function getEmailDomain(email) {
+  const normalized = cleanText(email, 120).toLowerCase();
+  const at = normalized.lastIndexOf('@');
+  if (at < 0) return '';
+  return normalizeEmailDomain(normalized.slice(at + 1));
+}
+
+function canRegisterTenantUser(tenant, email, requestedUserType) {
+  if (!tenant || tenant.status !== 'active') {
+    return { allowed: false, statusCode: 403, error: 'This tenant is not active.' };
+  }
+  const policy = getRegistrationPolicy(tenant.id);
+  if (!policy.allowSelfRegistration) {
+    return { allowed: false, statusCode: 403, error: 'Self-registration is disabled for this tenant. Ask your admin for an invite.' };
+  }
+  const domain = getEmailDomain(email);
+  if (policy.allowedEmailDomains.length && (!domain || !policy.allowedEmailDomains.includes(domain))) {
+    return { allowed: false, statusCode: 403, error: 'Use an approved company email domain to register.' };
+  }
+  const userType = requestedUserType === 'manager' ? 'manager' : 'associate';
+  if (userType === 'manager' && !policy.allowManagerSelfRegistration) {
+    return { allowed: false, statusCode: 403, error: 'Manager self-registration is disabled for this tenant.' };
+  }
+  return { allowed: true, policy, userType };
+}
+
 function getTenantRowByCode(tenantCode) {
   return db.prepare('SELECT * FROM tenants WHERE tenant_code = ?').get(cleanText(tenantCode, 32).toUpperCase());
 }
@@ -562,7 +1119,7 @@ function resolveAdminTargetTenant(auth, body = {}) {
 
 function patchTenantConfig(tenantId, patch) {
   const current = getTenantConfig(tenantId);
-  const next = { ...current, ...patch };
+  const next = normalizeTenantConfig({ ...current, ...patch });
   db.prepare('UPDATE tenants SET config_json = ?, updated_at = ? WHERE id = ?').run(json(next), nowIso(), tenantId);
   return next;
 }
@@ -577,7 +1134,7 @@ function patchTenantRow(tenantId, patch) {
     primaryDomain: cleanText(patch.primaryDomain ?? current.primary_domain, 120),
     branding: { ...parseJsonSafe(current.branding_json, {}), ...(patch.branding || {}) },
     security: { ...parseJsonSafe(current.security_json, {}), ...(patch.security || {}) },
-    config: { ...parseJsonSafe(current.config_json, {}), ...(patch.config || {}) }
+    config: normalizeTenantConfig({ ...parseJsonSafe(current.config_json, {}), ...(patch.config || {}) })
   };
   db.prepare(`
     UPDATE tenants
@@ -699,7 +1256,7 @@ function createTenant({ code, name, plan = 'enterprise', primaryDomain = '' }) {
   const tenantCode = cleanText(code, 32).toUpperCase();
   const tenantId = `tenant_${tenantCode.toLowerCase()}`;
   const createdAt = nowIso();
-  const cfg = {
+  const cfg = normalizeTenantConfig({
     orgName: cleanText(name, 120),
     hrEmail: '',
     portalUrl: '',
@@ -707,8 +1264,18 @@ function createTenant({ code, name, plan = 'enterprise', primaryDomain = '' }) {
     language: 'en-IN',
     hrmsType: '',
     setupCompleted: false,
-    tenantBranding: { logoText: cleanText(name, 120), accentColor: '#FFD101' }
-  };
+    tenantBranding: { logoText: cleanText(name, 120), accentColor: '#FFD101' },
+    imageEdit: { provider: 'disabled' },
+    registration: {
+      allowSelfRegistration: false,
+      allowManagerSelfRegistration: false,
+      allowedEmailDomains: []
+    },
+    botProtection: {
+      requireApproval: true,
+      scopes: { liveAgent: true, imageEdit: true, browserAgent: true }
+    }
+  });
   const branding = { theme: 'bloomie-enterprise', accentColor: '#FFD101', supportEmail: '' };
   const security = { dataResidency: 'IN', encryptionPolicy: 'AES-256 at rest planned, TLS in deployment', allowedDomains: [], backupVersioning: true, requireSso: false };
   db.prepare(`
@@ -949,19 +1516,319 @@ function getReportSummary(tenantId) {
   };
 }
 
+function getTicketAnalytics(tenantId) {
+  const tickets = getTicketsState(tenantId);
+  const categoryCounts = {};
+  const priorityCounts = {};
+  const dayCounts = {};
+  for (const ticket of tickets) {
+    const category = cleanText(ticket.category || 'Uncategorized', 80) || 'Uncategorized';
+    const priority = cleanText(ticket.priority || 'Medium', 20) || 'Medium';
+    const day = String(ticket.createdAt || nowIso()).slice(0, 10);
+    categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+    priorityCounts[priority] = (priorityCounts[priority] || 0) + 1;
+    dayCounts[day] = (dayCounts[day] || 0) + 1;
+  }
+  return {
+    summary: getReportSummary(tenantId),
+    categories: categoryCounts,
+    priorities: priorityCounts,
+    dailyVolume: dayCounts,
+    recentTickets: tickets.slice(0, 5).map(ticket => ({
+      id: ticket.id,
+      title: ticket.title,
+      status: ticket.status,
+      priority: ticket.priority,
+      category: ticket.category,
+      createdAt: ticket.createdAt
+    }))
+  };
+}
+
+function buildLiveAgentFunctionCatalog({ tenantId, user }) {
+  const sources = getKnowledgeSources(tenantId);
+  const imageEditStatus = getPublicImageEditStatus(getImageEditConfig(tenantId));
+  const ssoProviders = isManagerLike(user) ? getSsoProviders(tenantId) : [];
+  const security = isManagerLike(user) ? getTenantSecurity(tenantId) : {};
+  const sourceCounts = sources.reduce((acc, source) => {
+    const key = source.type || 'other';
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  return [
+    {
+      id: 'backend.health',
+      label: 'Backend Health',
+      status: 'live',
+      description: 'Checks the running Bloomie backend service.',
+      meta: { service: 'bloomie-backend', db: DB_PATH }
+    },
+    {
+      id: 'tickets.list',
+      label: 'Ticket Feed',
+      status: 'live',
+      description: 'Reads live ticket activity and recent helpdesk cases.',
+      meta: { totalTickets: getReportSummary(tenantId).totalTickets }
+    },
+    {
+      id: 'reports.summary',
+      label: 'Reports Summary',
+      status: isManagerLike(user) ? 'live' : 'restricted',
+      description: 'Returns ticket counts, resolution totals, and knowledge coverage.',
+      meta: isManagerLike(user) ? getReportSummary(tenantId) : { reason: 'admin_or_manager_role_required' }
+    },
+    {
+      id: 'reports.dashboard',
+      label: 'Reports Dashboard',
+      status: isManagerLike(user) ? 'live' : 'restricted',
+      description: 'Returns live category, priority, and daily volume analytics.',
+      meta: isManagerLike(user) ? {
+        categories: Object.keys(getTicketAnalytics(tenantId).categories).length,
+        priorities: Object.keys(getTicketAnalytics(tenantId).priorities).length
+      } : { reason: 'admin_or_manager_role_required' }
+    },
+    {
+      id: 'sources.list',
+      label: 'Knowledge Sources',
+      status: isManagerLike(user) ? 'live' : 'restricted',
+      description: 'Lists Google Sheet and knowledge sources connected to the workspace.',
+      meta: isManagerLike(user) ? { total: sources.length, byType: sourceCounts } : { reason: 'admin_or_manager_role_required' }
+    },
+    {
+      id: 'sources.google_sheet.sync',
+      label: 'Google Sheet Sync',
+      status: isManagerLike(user) ? 'live' : 'restricted',
+      description: 'Runs real Google Sheet ingestion into workspace knowledge sources.',
+      meta: isManagerLike(user) ? { configuredSheets: sourceCounts.google_sheet || 0 } : { reason: 'admin_or_manager_role_required' }
+    },
+    {
+      id: 'security.sso',
+      label: 'SSO Providers',
+      status: isManagerLike(user) ? 'live' : 'restricted',
+      description: 'Reads Google and Microsoft SSO provider status.',
+      meta: isManagerLike(user) ? {
+        enabledProviders: ssoProviders.filter(item => item.enabled).map(item => item.provider),
+        requireSso: !!security.requireSso
+      } : { reason: 'admin_or_manager_role_required' }
+    },
+    {
+      id: 'ai.image_edit',
+      label: 'Image Edit Provider',
+      status: imageEditStatus.configured ? 'live' : imageEditStatus.provider === 'disabled' ? 'disabled' : 'needs_setup',
+      description: 'Runs real image editing against the configured provider.',
+      meta: {
+        ...imageEditStatus,
+        approvalRequired: requiresBotApproval(tenantId, 'imageEdit')
+      }
+    }
+  ];
+}
+
+function detectLiveAgentRequests(prompt = '') {
+  const lower = cleanText(prompt, 2000).toLowerCase();
+  return {
+    wantsReports: /report|analytics|dashboard|summary|sla|resolution|breach|trend|stats/.test(lower),
+    wantsTickets: /ticket|case|request|issue|incident/.test(lower),
+    wantsSources: /knowledge|source|sheet|policy|sop|faq|document/.test(lower),
+    wantsSso: /sso|single sign|google login|microsoft login|entra|oauth/.test(lower),
+    wantsImageEdit: /image|photo|background|remove|campaign|visual|edit/.test(lower),
+    wantsCapabilities: /function|tool|capability|agent|live|status|available/.test(lower)
+  };
+}
+
+function buildLiveAgentResponse({ tenantId, user, prompt }) {
+  const requests = detectLiveAgentRequests(prompt);
+  const functionCatalog = buildLiveAgentFunctionCatalog({ tenantId, user });
+  const usedFunctions = [];
+  const lines = [];
+  const summary = getReportSummary(tenantId);
+  const isPrivileged = isManagerLike(user);
+
+  lines.push('Live agent is connected to the running Bloomie backend.');
+
+  if (requests.wantsCapabilities || (!requests.wantsReports && !requests.wantsTickets && !requests.wantsSources && !requests.wantsSso && !requests.wantsImageEdit)) {
+    usedFunctions.push('backend.health');
+    lines.push(`Available live functions: ${functionCatalog.map(item => `${item.label} (${item.status})`).join(', ')}.`);
+  }
+
+  if (requests.wantsTickets || requests.wantsReports) {
+    usedFunctions.push('tickets.list');
+    lines.push(`Tickets right now: ${summary.totalTickets} total, ${summary.open} open, ${summary.inProgress} in progress, ${summary.resolved} resolved, ${summary.escalated} escalated.`);
+  }
+
+  if (requests.wantsReports) {
+    if (isPrivileged) {
+      const analytics = getTicketAnalytics(tenantId);
+      usedFunctions.push('reports.summary', 'reports.dashboard');
+      const topCategory = Object.entries(analytics.categories).sort((a, b) => b[1] - a[1])[0];
+      const topPriority = Object.entries(analytics.priorities).sort((a, b) => b[1] - a[1])[0];
+      lines.push(`Top category: ${topCategory ? `${topCategory[0]} (${topCategory[1]})` : 'none yet'}. Top priority bucket: ${topPriority ? `${topPriority[0]} (${topPriority[1]})` : 'none yet'}.`);
+    } else {
+      lines.push('Detailed reporting is restricted to manager, admin, or master roles.');
+    }
+  }
+
+  if (requests.wantsSources) {
+    if (isPrivileged) {
+      const sources = getKnowledgeSources(tenantId);
+      usedFunctions.push('sources.list');
+      const sheetSources = sources.filter(item => item.type === 'google_sheet');
+      lines.push(`Knowledge sources connected: ${sources.length}. Google Sheets connected: ${sheetSources.length}.`);
+      if (sources.length) {
+        lines.push(`Latest source status: ${sources.slice(0, 3).map(item => `${item.title || item.type} (${item.status || 'unknown'})`).join(', ')}.`);
+      }
+    } else {
+      lines.push(`Knowledge coverage is active for this workspace. Published source count: ${summary.knowledgeSources}.`);
+    }
+  }
+
+  if (requests.wantsSso) {
+    if (isPrivileged) {
+      const providers = getSsoProviders(tenantId);
+      const security = getTenantSecurity(tenantId);
+      usedFunctions.push('security.sso');
+      lines.push(`SSO providers: ${providers.map(item => `${item.provider}:${item.enabled ? (item.configured ? 'ready' : 'needs setup') : 'disabled'}`).join(', ') || 'none'}. Require SSO: ${security.requireSso ? 'yes' : 'no'}.`);
+    } else {
+      lines.push('SSO configuration details are restricted to workspace admins.');
+    }
+  }
+
+  if (requests.wantsImageEdit) {
+    const imageEditStatus = getPublicImageEditStatus(getImageEditConfig(tenantId));
+    usedFunctions.push('ai.image_edit');
+    if (imageEditStatus.configured) {
+      lines.push(`Image editing is live through ${imageEditStatus.provider}. You can attach an image in chat and run a real edit now.`);
+    } else {
+      lines.push(`Image editing is not ready yet. Current provider: ${imageEditStatus.provider}. Configure the provider in Settings before using live image edits.`);
+    }
+  }
+
+  return {
+    response: lines.join('\n\n'),
+    usedFunctions: Array.from(new Set(usedFunctions)),
+    availableFunctions: functionCatalog,
+    requested: requests
+  };
+}
+
+function getBrowserAgentConfig(tenantId) {
+  const cfg = getTenantConfig(tenantId);
+  const browserAgent = cfg && cfg.browserAgent && typeof cfg.browserAgent === 'object' ? cfg.browserAgent : {};
+  const allowedDomains = Array.isArray(browserAgent.allowedDomains)
+    ? browserAgent.allowedDomains.map(item => cleanText(item, 120).toLowerCase()).filter(Boolean)
+    : [];
+  return {
+    agentName: cleanText(browserAgent.agentName || 'Keenu', 80) || 'Keenu',
+    homeUrl: cleanText(browserAgent.homeUrl || 'https://www.linkedin.com', 500),
+    defaultDirection: cleanText(browserAgent.defaultDirection || '', 1000),
+    linkedInEnabled: browserAgent.linkedInEnabled !== false,
+    allowedDomains: Array.from(new Set([
+      ...(browserAgent.linkedInEnabled === false ? [] : ['linkedin.com']),
+      ...allowedDomains
+    ]))
+  };
+}
+
+function getBrowserAgentStatus(tenantId) {
+  const config = getBrowserAgentConfig(tenantId);
+  return {
+    agent: config.agentName,
+    mode: 'browser-operator',
+    linkedInAccess: !!config.linkedInEnabled,
+    homeUrl: config.homeUrl,
+    allowedDomains: config.allowedDomains,
+    functions: [
+      {
+        id: 'browser.navigate',
+        label: 'Browser Navigation',
+        status: 'live',
+        description: 'Navigate Keenu to an approved destination.',
+        meta: { homeUrl: config.homeUrl }
+      },
+      {
+        id: 'browser.linkedin',
+        label: 'LinkedIn Access',
+        status: config.linkedInEnabled ? 'live' : 'disabled',
+        description: 'LinkedIn browsing is explicitly available to Keenu.',
+        meta: { allowed: !!config.linkedInEnabled, domains: config.allowedDomains.filter(domain => domain.includes('linkedin')) }
+      },
+      {
+        id: 'browser.instructions',
+        label: 'Directed Execution',
+        status: 'live',
+        description: 'Accepts operator instructions and returns a next-step execution plan.',
+        meta: { hasDefaultDirection: !!config.defaultDirection }
+      }
+    ]
+  };
+}
+
+function buildBrowserAgentResponse({ tenantId, prompt, targetUrl }) {
+  const config = getBrowserAgentConfig(tenantId);
+  const urlValue = cleanText(targetUrl || config.homeUrl, 500);
+  let host = '';
+  try {
+    host = new URL(urlValue).hostname.toLowerCase();
+  } catch {}
+  const hostAllowed = !host || config.allowedDomains.some(domain => host === domain || host.endsWith(`.${domain}`));
+  if (!hostAllowed) {
+    throw new Error(`Keenu can only open approved domains right now: ${config.allowedDomains.join(', ')}`);
+  }
+  const lower = cleanText(prompt, 2000).toLowerCase();
+  const isLinkedInTask = host.includes('linkedin.com') || lower.includes('linkedin');
+  const plan = [];
+  if (urlValue) plan.push(`Open ${urlValue}`);
+  if (isLinkedInTask) {
+    plan.push('Use LinkedIn-safe navigation and stay inside approved LinkedIn pages');
+    if (/search|find|prospect|candidate|hiring|recruit/.test(lower)) plan.push('Go to LinkedIn search and refine the query from the instruction');
+    if (/message|outreach|connect|invite/.test(lower)) plan.push('Prepare the outreach flow, but confirm profile context before any send action');
+    if (/profile|company|post|job/.test(lower)) plan.push('Inspect the requested LinkedIn profile, company page, post, or job view');
+  } else {
+    plan.push('Follow the operator instruction step by step inside the approved browser workspace');
+  }
+  if (config.defaultDirection) plan.push(`Workspace default: ${config.defaultDirection}`);
+  plan.push(`Current instruction: ${cleanText(prompt, 1000)}`);
+  return {
+    ok: true,
+    agent: config.agentName,
+    targetUrl: urlValue,
+    linkedInAccess: !!config.linkedInEnabled,
+    allowedDomains: config.allowedDomains,
+    response: `${config.agentName} is ready in a separate browser workspace.${isLinkedInTask ? ' LinkedIn access is enabled for this task.' : ''}`,
+    plan
+  };
+}
+
 function authenticate(req) {
   const auth = req.headers.authorization || '';
-  if (!auth.startsWith('Bearer ')) return null;
-  const token = auth.slice(7).trim();
+  const cookies = parseCookies(req);
+  const bearerToken = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  const token = bearerToken || cleanText(cookies[getSessionCookieName()] || '', 4096);
+  if (!token) return null;
   const parsed = verifySessionToken(token);
   if (!parsed) return null;
   const session = db.prepare('SELECT * FROM sessions WHERE id = ? AND revoked_at IS NULL').get(parsed.sessionId);
   if (!session) return null;
   if (session.expires_at < Date.now()) return null;
+  if (session.tenant_id !== parsed.tenantId || session.user_id !== parsed.userId) return null;
   if (session.token_hash !== hashText(token)) return null;
+  const tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(parsed.tenantId);
+  if (!tenant || tenant.status !== 'active') return null;
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(parsed.userId);
+  if (!user || user.tenant_id !== parsed.tenantId) return null;
   if (!user || user.status !== 'active') return null;
   return { token, session, user: publicUser(user) };
+}
+
+function cleanupExpiredSessions() {
+  db.prepare('DELETE FROM sessions WHERE revoked_at IS NOT NULL OR expires_at < ?').run(Date.now());
+}
+
+function cleanupRateLimitStore() {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitStore.entries()) {
+    if (!entry || entry.resetAt <= now) rateLimitStore.delete(key);
+  }
 }
 
 function createOauthState({ tenantId, provider }) {
@@ -1141,9 +2008,12 @@ async function handleApi(req, res, urlObj) {
     const name = cleanText(body.name, 80);
     const dept = cleanText(body.dept, 60);
     const property = cleanText(body.property, 80);
-    const userType = body.userType === 'manager' ? 'manager' : 'associate';
+    const requestedUserType = body.userType === 'manager' ? 'manager' : 'associate';
     const password = String(body.password || '');
     if (!empId || !email || !name || !dept || password.length < 6) return sendJson(res, 400, { error: 'Invalid registration payload' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return sendJson(res, 400, { error: 'Enter a valid email address' });
+    const registrationGate = canRegisterTenantUser(tenant, email, requestedUserType);
+    if (!registrationGate.allowed) return sendJson(res, registrationGate.statusCode || 403, { error: registrationGate.error });
     const exists = db.prepare('SELECT id FROM users WHERE tenant_id = ? AND (emp_id = ? OR email = ?)').get(tenant.id, empId, email);
     if (exists) return sendJson(res, 409, { error: 'User already exists' });
     const salt = genSalt();
@@ -1151,8 +2021,8 @@ async function handleApi(req, res, urlObj) {
     db.prepare(`
       INSERT INTO users (id, tenant_id, emp_id, name, email, dept, property, role, user_type, status, password_salt, password_hash, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(id, tenant.id, empId, name, email, dept, property, 'user', userType, 'active', salt, hashPassword(password, salt), nowIso(), nowIso());
-    logAudit({ tenantId: tenant.id, actorUserId: id, actorRole: 'user', action: 'user.registered', entityType: 'user', entityId: id, details: { empId, email, userType } });
+    `).run(id, tenant.id, empId, name, email, dept, property, 'user', registrationGate.userType, 'active', salt, hashPassword(password, salt), nowIso(), nowIso());
+    logAudit({ tenantId: tenant.id, actorUserId: id, actorRole: 'user', action: 'user.registered', entityType: 'user', entityId: id, details: { empId, email, userType: registrationGate.userType } });
     sendJson(res, 201, { ok: true });
     return;
   }
@@ -1164,6 +2034,10 @@ async function handleApi(req, res, urlObj) {
     if (!tenant) {
       metrics.authFailures += 1;
       return sendJson(res, 404, { error: 'Tenant not found' });
+    }
+    if (tenant.status !== 'active') {
+      metrics.authFailures += 1;
+      return sendJson(res, 403, { error: 'This tenant is not active' });
     }
     const identifier = cleanText(body.identifier, 120).toLowerCase();
     const password = String(body.password || '');
@@ -1193,6 +2067,7 @@ async function handleApi(req, res, urlObj) {
       VALUES (?, ?, ?, ?, ?, NULL, ?)
     `).run(sessionId, tenant.id, row.id, hashText(token), expiresAt, nowIso());
     logAudit({ tenantId: tenant.id, actorUserId: row.id, actorRole: row.role, action: 'auth.login', entityType: 'session', entityId: sessionId });
+    res.setHeader('Set-Cookie', buildSessionCookie(token, expiresAt));
     sendJson(res, 200, {
       token,
       user: publicUser(row),
@@ -1206,6 +2081,7 @@ async function handleApi(req, res, urlObj) {
     if (!auth) return;
     db.prepare('UPDATE sessions SET revoked_at = ? WHERE id = ?').run(nowIso(), auth.session.id);
     logAudit({ tenantId: auth.user.tenantId, actorUserId: auth.user.id, actorRole: auth.user.role, action: 'auth.logout', entityType: 'session', entityId: auth.session.id });
+    res.setHeader('Set-Cookie', clearSessionCookieHeader());
     sendJson(res, 200, { ok: true });
     return;
   }
@@ -1240,6 +2116,7 @@ async function handleApi(req, res, urlObj) {
     if (!code || !state || state.provider !== provider) return sendText(res, 400, 'Invalid SSO callback');
     const tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(state.tenantId);
     if (!tenant) return sendText(res, 404, 'Tenant not found');
+    if (tenant.status !== 'active') return sendText(res, 403, 'This tenant is not active');
     const row = db.prepare('SELECT * FROM sso_providers WHERE tenant_id = ? AND provider = ?').get(tenant.id, provider);
     if (!row || !row.enabled) return sendText(res, 400, 'SSO provider not enabled');
     try {
@@ -1261,9 +2138,11 @@ async function handleApi(req, res, urlObj) {
         .run(sessionId, tenant.id, user.id, hashText(token), expiresAt, nowIso());
       logAudit({ tenantId: tenant.id, actorUserId: user.id, actorRole: user.role, action: `auth.${provider}.login`, entityType: 'session', entityId: sessionId, details: { email: profile.email } });
       const redirectTarget = new URL(APP_BASE_URL);
-      redirectTarget.searchParams.set('ssoToken', token);
       redirectTarget.searchParams.set('tenantCode', tenant.tenant_code);
-      res.writeHead(302, { Location: redirectTarget.toString() });
+      res.writeHead(302, {
+        Location: redirectTarget.toString(),
+        'Set-Cookie': buildSessionCookie(token, expiresAt)
+      });
       res.end();
     } catch (err) {
       recordError(err, `oauth-callback:${provider}`);
@@ -1432,6 +2311,127 @@ async function handleApi(req, res, urlObj) {
     const next = patchTenantConfig(auth.user.tenantId, body || {});
     logAudit({ tenantId: auth.user.tenantId, actorUserId: auth.user.id, actorRole: auth.user.role, action: 'config.patched', entityType: 'tenant_config', entityId: auth.user.tenantId, details: body });
     sendJson(res, 200, { config: next });
+    return;
+  }
+
+  if (req.method === 'GET' && pathname === '/api/ai/image-edit/status') {
+    const auth = requireAuth(req, res);
+    if (!auth) return;
+    const config = getImageEditConfig(auth.user.tenantId);
+    sendJson(res, 200, {
+      status: getPublicImageEditStatus(config),
+      protection: getPublicBotProtectionConfig(auth.user.tenantId)
+    });
+    return;
+  }
+
+  if (req.method === 'GET' && pathname === '/api/ai/live-agent/status') {
+    const auth = requireAuth(req, res);
+    if (!auth) return;
+    sendJson(res, 200, {
+      ok: true,
+      agent: 'bloomie-live-agent',
+      functions: buildLiveAgentFunctionCatalog({ tenantId: auth.user.tenantId, user: auth.user }),
+      protection: getPublicBotProtectionConfig(auth.user.tenantId)
+    });
+    return;
+  }
+
+  if (req.method === 'POST' && pathname === '/api/ai/live-agent/respond') {
+    const auth = requireAuth(req, res);
+    if (!auth) return;
+    const raw = await readBody(req);
+    const body = parseJsonSafe(raw, {});
+    const prompt = cleanText(body.prompt || body.message, 2000);
+    if (!prompt) return sendJson(res, 400, { error: 'prompt is required' });
+    if (!requireBotApproval(res, auth.user.tenantId, 'liveAgent', body, auth)) return;
+    const result = buildLiveAgentResponse({ tenantId: auth.user.tenantId, user: auth.user, prompt });
+    logAudit({
+      tenantId: auth.user.tenantId,
+      actorUserId: auth.user.id,
+      actorRole: auth.user.role,
+      action: 'ai.live_agent.responded',
+      entityType: 'ai_agent',
+      entityId: 'bloomie-live-agent',
+      details: { prompt, usedFunctions: result.usedFunctions }
+    });
+    sendJson(res, 200, result);
+    return;
+  }
+
+  if (req.method === 'GET' && pathname === '/api/browser-agent/status') {
+    const auth = requireAuth(req, res);
+    if (!auth) return;
+    if (!requireRole(auth, ['admin', 'master'], res)) return;
+    sendJson(res, 200, {
+      ...getBrowserAgentStatus(auth.user.tenantId),
+      protection: getPublicBotProtectionConfig(auth.user.tenantId)
+    });
+    return;
+  }
+
+  if (req.method === 'POST' && pathname === '/api/browser-agent/respond') {
+    const auth = requireAuth(req, res);
+    if (!auth) return;
+    if (!requireRole(auth, ['admin', 'master'], res)) return;
+    const raw = await readBody(req);
+    const body = parseJsonSafe(raw, {});
+    const prompt = cleanText(body.prompt || body.message, 2000);
+    if (!prompt) return sendJson(res, 400, { error: 'prompt is required' });
+    if (!requireBotApproval(res, auth.user.tenantId, 'browserAgent', body, auth)) return;
+    try {
+      const result = buildBrowserAgentResponse({
+        tenantId: auth.user.tenantId,
+        prompt,
+        targetUrl: body.targetUrl
+      });
+      logAudit({
+        tenantId: auth.user.tenantId,
+        actorUserId: auth.user.id,
+        actorRole: auth.user.role,
+        action: 'browser_agent.responded',
+        entityType: 'browser_agent',
+        entityId: 'keenu',
+        details: { prompt, targetUrl: cleanText(body.targetUrl, 500) }
+      });
+      sendJson(res, 200, result);
+    } catch (err) {
+      sendJson(res, 400, { error: err.message || 'Browser agent failed' });
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && pathname === '/api/ai/image-edit') {
+    const auth = requireAuth(req, res);
+    if (!auth) return;
+    const raw = await readBody(req, 15 * 1024 * 1024);
+    const body = parseJsonSafe(raw, {});
+    if (!requireBotApproval(res, auth.user.tenantId, 'imageEdit', body, auth)) return;
+    try {
+      const result = await runImageEdit(auth.user.tenantId, body || {});
+      logAudit({
+        tenantId: auth.user.tenantId,
+        actorUserId: auth.user.id,
+        actorRole: auth.user.role,
+        action: 'ai.image_edit.generated',
+        entityType: 'ai_asset',
+        entityId: cleanId(`IMG-${Date.now()}`, 'IMG'),
+        details: {
+          provider: result.provider,
+          operation: cleanText(body.operation, 80),
+          target: cleanText(body.target, 240)
+        }
+      });
+      sendJson(res, 200, {
+        ok: true,
+        imageDataUrl: result.imageDataUrl,
+        revisedPrompt: result.revisedPrompt,
+        provider: result.provider
+      });
+    } catch (err) {
+      recordError(err, 'image-edit');
+      sendJson(res, 400, { error: err.message || 'Image edit failed' });
+    }
     return;
   }
 
@@ -1641,24 +2641,11 @@ async function handleApi(req, res, urlObj) {
     const auth = requireAuth(req, res);
     if (!auth) return;
     if (!requireRole(auth, ['admin', 'master'], res)) return;
-    const tickets = getTicketsState(auth.user.tenantId);
-    const categoryCounts = {};
-    const priorityCounts = {};
-    const dayCounts = {};
-    for (const ticket of tickets) {
-      const category = cleanText(ticket.category || 'Uncategorized', 80) || 'Uncategorized';
-      const priority = cleanText(ticket.priority || 'Medium', 20) || 'Medium';
-      const day = String(ticket.createdAt || nowIso()).slice(0, 10);
-      categoryCounts[category] = (categoryCounts[category] || 0) + 1;
-      priorityCounts[priority] = (priorityCounts[priority] || 0) + 1;
-      dayCounts[day] = (dayCounts[day] || 0) + 1;
-    }
     sendJson(res, 200, {
-      summary: getReportSummary(auth.user.tenantId),
-      categories: categoryCounts,
-      priorities: priorityCounts,
-      dailyVolume: dayCounts,
-      topOpenTickets: tickets.filter(ticket => ticket.status !== 'resolved').slice(0, 10)
+      ...getTicketAnalytics(auth.user.tenantId),
+      topOpenTickets: getTicketsState(auth.user.tenantId).filter(ticket => ticket.status !== 'resolved').slice(0, 10),
+      lastSyncRunAt: metrics.lastSyncRunAt,
+      lastBackupAt: metrics.lastBackupAt
     });
     return;
   }
@@ -2011,6 +2998,7 @@ async function handleApi(req, res, urlObj) {
   sendJson(res, 404, { error: 'Not found' });
 }
 
+validateRuntimeConfig();
 initDb();
 
 const server = http.createServer(async (req, res) => {
@@ -2049,6 +3037,15 @@ setInterval(() => {
     recordError(err, 'auto-backup');
   }
 }, BACKUP_INTERVAL_MS).unref();
+
+setInterval(() => {
+  try {
+    cleanupExpiredSessions();
+    cleanupRateLimitStore();
+  } catch (err) {
+    recordError(err, 'housekeeping');
+  }
+}, HOUSEKEEPING_INTERVAL_MS).unref();
 
 server.listen(PORT, HOST, () => {
   console.log(`Bloomie server listening on http://${HOST}:${PORT}`);

@@ -17,15 +17,20 @@ The server:
 - writes logs to `backend/logs`
 - writes snapshots to `backend/backups`
 - runs periodic backup and Google Sheet sync workers
+- keeps self-registration tenant-scoped through `config.registration`
+- blocks login and session use when a tenant is suspended or inactive
 
 ## Default Master Access
+
+Demo defaults are only enabled when `BLOOMIE_ALLOW_DEMO_DEFAULTS=true`.
+
 - ID: `master` or `SYS-000`
 - Password: `Bloomie@9271#Master`
 
 Override with:
 
 ```bash
-BLOOMIE_MASTER_PASS='your-secret' npm start
+BLOOMIE_ALLOW_DEMO_DEFAULTS=true BLOOMIE_MASTER_PASS='your-secret' npm start
 ```
 
 ## Key APIs
@@ -51,3 +56,17 @@ BLOOMIE_MASTER_PASS='your-secret' npm start
 - `GET /api/reports/dashboard`
 - `POST /api/sources/google-sheet/sync`
 - `GET /api/sources/:sourceId/snapshot`
+
+## Registration Policy
+
+Tenant admins can control sign-up behavior by patching `config.registration` through `POST /api/config/patch` or the tenant update flow.
+
+Supported fields:
+- `allowSelfRegistration`
+- `allowManagerSelfRegistration`
+- `allowedEmailDomains`
+
+Defaults:
+- the local default tenant can self-register in non-production for demo and QA use
+- newly created tenants default to invite-only registration
+- self-registered accounts are least-privilege by default
